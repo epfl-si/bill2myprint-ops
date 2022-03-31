@@ -7,14 +7,14 @@ Setup
 Prerequisites
 
 ```
-sudo apt-get install -y unixodbc unixodbc-dev freetds-dev tdsodbc
+V sudo apt-get install -y unixodbc unixodbc-dev freetds-dev tdsodbc
 
 ```
 
 Clone repository and submodule
 
 ```
-git clone --recursive git@github.com:epfl-si/bill2myprint.git
+V git clone --recursive git@github.com:epfl-si/bill2myprint.git
 ```
 
 Create and activate a virtual env (with pyenv)

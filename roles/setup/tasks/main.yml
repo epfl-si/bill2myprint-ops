@@ -24,17 +24,21 @@
     - install_packages
 
 
-- name: Création du dossier /srv
+- name: Création du dossier /srv/ofrf
   ansible.builtin.file:
-    path: "/srv"
+    path: "/srv/ofrf"
     state: directory
+    owner: ubuntu
+    group: ubuntu
     mode: '0755'
+  become: yes
 
 
 - name: Clone bill2myprint repo
   git:
       repo: git@github.com:epfl-si/bill2myprint.git
-      dest: /srv
+      dest: /srv/ofrf
+      force: yes
 
 
 #- name: Copie le fichier toto.txt
