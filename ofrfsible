@@ -5,11 +5,11 @@
 #
 # Usage ("ansible" mode):
 #
-#   ./startsible
+#   ./ofrfsible
 #
 # Usage ("ansible-playbook" mode):
 #
-#   ./startsible -l prod
+#   ./ofrfsible -l prod
 #
 #
 # If you are unfamiliar with Ansible, read up on it at
