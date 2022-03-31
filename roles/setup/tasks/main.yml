@@ -1,0 +1,66 @@
+---
+- tags: all
+  include_vars: setup-vars.yml
+
+
+- name: Ajoute toutes les clefs ssh de la FSD
+  ansible.builtin.shell:
+    cmd: curl https://raw.githubusercontent.com/zuzu59/deploy-proxmox/master/get_ssh_key_fsd.sh | bash
+    chdir: /home/ubuntu
+  tags: [ never, init_ssh ]
+
+
+- name: install useful packages
+  apt:
+    name:
+      - htop
+      - tree
+    state: present
+    force_apt_get: yes
+  become: yes
+  tags:
+    - install_packages
+    
+
+- name: Copie le fichier toto.txt
+  ansible.builtin.copy:
+    src: ./toto.txt
+    dest: /home/ubuntu
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+    
+
+- name: Création du dossier toto-dir
+  ansible.builtin.file:
+    path: "{{ toto_dir }}"
+    state: directory
+    mode: '0755'
+
+
+- name: Création du dossier tutu-dir
+  ansible.builtin.file:
+    path: "{{ tutu_dir }}"
+    state: directory
+    mode: '0755'
+
+
+- name: Docker install
+  import_tasks:
+    file: docker-install.yml
+  tags:
+    - docker-install
+
+
+- name: WEB server install
+  import_tasks:
+    file: web-server.yml
+  tags:
+    - web-server-install
+
+
+
+
+
+
+
