@@ -1,0 +1,49 @@
+- name: Create db container
+  community.docker.docker_container:
+    name: local-mysql
+    image: mysql:5.7
+    state: started
+    restart_policy: 'unless-stopped'
+    env:
+      MYSQL_ROOT_PASSWORD: toto
+      MYSQL_DATABASE: ofrf
+      MYSQL_USER: ofrf
+      MYSQL_PASSWORD: ofrf
+    container_default_behavior: no_defaults
+    networks:
+      - name: 'ofrf_network'
+  tags:
+    - go_db
+
+
+
+
+
+
+
+#- name: WEB server start
+#  docker_container:
+#    container_default_behavior: compatibility
+#    name: test-apache-hello-world
+#    state: started
+#    image: httpd:2.4
+#    volumes:
+#      - /home/ubuntu/web:/usr/local/apache2/htdocs/
+#    ports:
+#      - "8181:80"
+#  tags: web-server
+#
+## - name: Crée le fichier de bienvenue sur le serveur WEB
+##   ansible.builtin.shell:
+##     cmd: echo "{{ web_server_msg }}" > /home/ubuntu/web/index.html
+##     chdir: /home/ubuntu
+##   tags: web-msg
+##   become: yes
+#
+#- name: Crée le fichier de bienvenue sur le serveur WEB
+#  ansible.builtin.template:
+#    src: index.html
+#    dest: /home/ubuntu/web/index.html
+#  become: yes
+#  tags: web-msg
+#

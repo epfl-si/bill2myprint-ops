@@ -56,6 +56,13 @@
     - app-server-install
 
 
+- name: db server install
+  import_tasks:
+    file: db-server.yml
+  tags:
+    - db-server-install
+
+
 #- name: Copie le fichier toto.txt
 #  ansible.builtin.copy:
 #    src: ./toto.txt
