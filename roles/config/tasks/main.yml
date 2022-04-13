@@ -1,0 +1,5 @@
+- name: fab clone
+  import_tasks:
+    file: fab-clone.yml
+  tags:
+    - fab-clone

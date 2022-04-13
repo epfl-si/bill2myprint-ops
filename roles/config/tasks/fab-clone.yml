@@ -1,0 +1,22 @@
+- name: Users exist ?
+  ansible.builtin.shell:
+    cmd: docker exec local-mysql /bin/bash -c 'mysql  -h db ofrf -u ofrf -pofrf -e "SHOW tables;" 2>&1 | grep -v "Warning"'
+  ignore_errors: true
+  changed_when: false
+  register: _tables_DB_exist
+
+- debug:
+    var: _tables_DB_exist
+
+- debug:
+    msg: "Tables exist"
+  when: _tables_DB_exist.stdout != ""
+
+- debug:
+    msg: "Tables doesn't exist"
+  when: _tables_DB_exist.stdout == ""
+
+- name: fab clone
+  ansible.builtin.shell:
+    cmd: docker exec -it bill2myprint-app fab clone
+  when: _tables_DB_exist.stdout == ""

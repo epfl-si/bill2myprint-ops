@@ -2,6 +2,7 @@
   community.docker.docker_container:
     name: local-mysql
     image: mysql:5.7
+    hostname: db
     state: started
     restart_policy: 'unless-stopped'
     env:

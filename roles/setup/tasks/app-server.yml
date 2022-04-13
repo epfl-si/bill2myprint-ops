@@ -16,6 +16,7 @@
   community.docker.docker_container:
     name: bill2myprint-app
     image: bill2myprint-app
+    hostname: app
     state: started
     restart_policy: 'unless-stopped'
     volumes:

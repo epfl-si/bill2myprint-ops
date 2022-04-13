@@ -6,6 +6,12 @@
     - setup
 
 
+- name: Config project
+  hosts: all
+  roles:
+    - name: ../roles/config
+  tags:
+    - config
 
 
 
