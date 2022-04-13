@@ -24,9 +24,16 @@
     - install_packages
 
 
-- name: Création du dossier /srv/ofrf
+- name: Docker install
+  import_tasks:
+    file: docker-install.yml
+  tags:
+    - docker-install
+
+
+- name: Création du dossier /app/ofrf
   ansible.builtin.file:
-    path: "/srv/ofrf"
+    path: "/app/ofrf"
     state: directory
     owner: ubuntu
     group: ubuntu
@@ -37,8 +44,16 @@
 - name: Clone bill2myprint repo
   git:
       repo: git@github.com:epfl-si/bill2myprint.git
-      dest: /srv/ofrf
+      dest: /app/ofrf
       force: yes
+      version: fea-docker-file
+
+
+- name: app server install
+  import_tasks:
+    file: app-server.yml
+  tags:
+    - app-server-install
 
 
 #- name: Copie le fichier toto.txt

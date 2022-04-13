@@ -1,0 +1,62 @@
+- name: Build app (django) image
+  community.docker.docker_image:
+    name: bill2myprint-app
+    build:
+      path: '/app/ofrf'
+#      args:
+#        LARADOCK_PHP_VERSION: '{{ PHP_VERSION }}'
+      nocache: no
+    force_source: yes
+    source: build
+  tags:
+    - build_app
+
+
+- name: Create app container
+  community.docker.docker_container:
+    name: bill2myprint-app
+    image: bill2myprint-app
+    state: started
+    restart_policy: 'unless-stopped'
+    volumes:
+      - /app/ofrf:/app
+    ports:
+      - 8008:8000
+    container_default_behavior: no_defaults
+    networks:
+      - name: 'ofrf_network'
+  tags:
+    - go_app
+
+
+
+
+
+
+
+#- name: WEB server start
+#  docker_container:
+#    container_default_behavior: compatibility
+#    name: test-apache-hello-world
+#    state: started
+#    image: httpd:2.4
+#    volumes:
+#      - /home/ubuntu/web:/usr/local/apache2/htdocs/
+#    ports:
+#      - "8181:80"
+#  tags: web-server
+#
+## - name: Crée le fichier de bienvenue sur le serveur WEB
+##   ansible.builtin.shell:
+##     cmd: echo "{{ web_server_msg }}" > /home/ubuntu/web/index.html
+##     chdir: /home/ubuntu
+##   tags: web-msg
+##   become: yes
+#
+#- name: Crée le fichier de bienvenue sur le serveur WEB
+#  ansible.builtin.template:
+#    src: index.html
+#    dest: /home/ubuntu/web/index.html
+#  become: yes
+#  tags: web-msg
+#
