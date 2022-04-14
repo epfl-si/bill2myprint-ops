@@ -12,8 +12,8 @@
     - symbolic-link
 
 
-#- name: migrate
-#  import_tasks:
-#    file: migrate.yml
-#  tags:
-#    - migrate
+- name: migrate
+  import_tasks:
+    file: migrate.yml
+  tags:
+    - migrate
