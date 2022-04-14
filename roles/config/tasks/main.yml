@@ -17,3 +17,10 @@
     file: migrate.yml
   tags:
     - migrate
+
+
+- name: runserver
+  import_tasks:
+    file: runserver.yml
+  tags:
+    - runserver

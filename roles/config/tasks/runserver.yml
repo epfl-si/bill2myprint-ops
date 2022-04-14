@@ -1,0 +1,44 @@
+#- name: Getting process IDs of the process
+#  pids:
+#      name: python
+#  register: pids_of_python
+#
+#- name: Printing the process IDs obtained
+#  debug:
+#    msg: "PIDS of python:{{pids_of_python.pids|join(',')}}"
+
+
+- name: Getting process IDs of the process
+  pids:
+      name: python
+  register: _runserver_running
+
+#- name: runserver is running ?
+#  ansible.builtin.shell:
+#    cmd: docker exec -it bill2myprint-app /bin/bash -c 'ps ax 2>&1 | grep "runserver" | grep 8000' || true
+#  ignore_errors: true
+#  changed_when: false
+#  register: _runserver_running
+
+- debug:
+    var: _runserver_running
+
+- debug:
+    msg: "runserver running"
+  when: _runserver_running.pids != []
+
+- debug:
+    msg: "runserver doesn't run"
+  when: _runserver_running.pids == []
+
+#- name: Run runserver
+#  ansible.builtin.shell:
+#    cmd: docker exec -it bill2myprint-app python src/manage.py runserver 0.0.0.0:8000 &
+#  when: _runserver_running.pids == ""
+
+
+#- name: Migrate
+#  ansible.builtin.shell:
+#    cmd: docker exec -t bill2myprint-app python src/manage.py runserver 0.0.0.0:8000 &
+#  ignore_errors: true
+#  changed_when: false
