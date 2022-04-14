@@ -3,3 +3,17 @@
     file: fab-clone.yml
   tags:
     - fab-clone
+
+
+- name: symbolic link
+  import_tasks:
+    file: symbolic-link.yml
+  tags:
+    - symbolic-link
+
+
+#- name: migrate
+#  import_tasks:
+#    file: migrate.yml
+#  tags:
+#    - migrate
