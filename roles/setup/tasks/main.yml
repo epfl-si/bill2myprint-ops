@@ -24,6 +24,14 @@
     - install_packages
 
 
+- name: Install python psutil package
+  pip:
+    name: psutil
+    executable: pip3
+  tags:
+    - install_python_psutil
+
+
 - name: Docker install
   import_tasks:
     file: docker-install.yml
