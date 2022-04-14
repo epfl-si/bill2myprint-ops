@@ -31,10 +31,10 @@
     msg: "runserver doesn't run"
   when: _runserver_running.pids == []
 
-#- name: Run runserver
-#  ansible.builtin.shell:
-#    cmd: docker exec -it bill2myprint-app python src/manage.py runserver 0.0.0.0:8000 &
-#  when: _runserver_running.pids == ""
+- name: Run runserver
+  ansible.builtin.shell:
+    cmd: docker exec -t bill2myprint-app python src/manage.py runserver 0.0.0.0:8000 &
+  when: _runserver_running.pids == []
 
 
 #- name: Migrate
