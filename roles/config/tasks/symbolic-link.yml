@@ -18,5 +18,5 @@
 
 - name: Create default.py symbolic link from dockercompose.py
   ansible.builtin.shell:
-    cmd: docker exec -it bill2myprint-app rm -f /app/src/config/settings/default.py && docker exec -it bill2myprint-app ln -s /app/src/config/settings/dockercompose.py /app/src/config/settings/default.py
+    cmd: docker exec -it bill2myprint-app rm -f /app/src/config/settings/default.py && docker exec -it bill2myprint-app ln -s /app/src/config/settings/dockercompose.py /app/src/config/settings/default.py && docker exec -it bill2myprint-app chmod 755 /app/src/config/settings/default.py
   when: _ln_exist.stdout == ""

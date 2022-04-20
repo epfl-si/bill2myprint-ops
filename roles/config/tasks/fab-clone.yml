@@ -1,3 +1,22 @@
+# Manage data directory; create /src/data if it doesn't exist
+- name: Create data directory if it doesn't exist
+  ansible.builtin.file:
+    path: "/app/ofrf/src/data"
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+
+# Manage data/dbproddump.sql file: copy if it doesn't exist
+- name: Copy dbproddump.sql if it doesn't exist
+  ansible.builtin.copy:
+    src: ./data/dbproddump.sql
+    dest: /app/ofrf/src/data/dbproddump.sql
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+
+# Manage dump for database: clone data if table is empty
 - name: Users exist ?
   ansible.builtin.shell:
     cmd: docker exec local-mysql /bin/bash -c 'mysql  -h db ofrf -u ofrf -pofrf -e "SHOW tables;" 2>&1 | grep -v "Warning"'

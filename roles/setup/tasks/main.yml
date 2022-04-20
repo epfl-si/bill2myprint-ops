@@ -55,6 +55,18 @@
       dest: /app/ofrf
       force: yes
       version: fea-docker-file
+  tags:
+    - git_clone
+
+
+- name: Recursively change ownership of a directory
+  ansible.builtin.file:
+    path: /app/ofrf
+    recurse: yes
+    mode: '0755'
+  become: yes
+  tags:
+    - ofrf_change_mode
 
 
 - name: app server install
@@ -69,47 +81,3 @@
     file: db-server.yml
   tags:
     - db-server-install
-
-
-#- name: Copie le fichier toto.txt
-#  ansible.builtin.copy:
-#    src: ./toto.txt
-#    dest: /home/ubuntu
-#    owner: ubuntu
-#    group: ubuntu
-#    mode: '0644'
-#
-#
-#- name: Création du dossier toto-dir
-#  ansible.builtin.file:
-#    path: "{{ toto_dir }}"
-#    state: directory
-#    mode: '0755'
-#
-#
-#- name: Création du dossier tutu-dir
-#  ansible.builtin.file:
-#    path: "{{ tutu_dir }}"
-#    state: directory
-#    mode: '0755'
-#
-#
-#- name: Docker install
-#  import_tasks:
-#    file: docker-install.yml
-#  tags:
-#    - docker-install
-#
-#
-#- name: WEB server install
-#  import_tasks:
-#    file: web-server.yml
-#  tags:
-#    - web-server-install
-
-
-
-
-
-
-
