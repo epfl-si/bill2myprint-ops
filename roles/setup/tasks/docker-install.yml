@@ -16,20 +16,20 @@
   become: yes
 
   
-- name: remove pip docker-py
+- name: Remove pip docker-py
   pip:
     name: docker-py
     state: absent
   become: yes
 
 
-- name: install docker for pip
+- name: Install docker for pip
   pip:
     name: docker
     state: present
   become: yes
 
-- name: ensure ubuntu user in docker group
+- name: Ensure ubuntu user in docker group
   user:
     name: ubuntu
     append: yes

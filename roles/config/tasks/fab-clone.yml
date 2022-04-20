@@ -35,7 +35,7 @@
     msg: "Tables doesn't exist"
   when: _tables_DB_exist.stdout == ""
 
-- name: fab clone
+- name: Run fab clone
   ansible.builtin.shell:
     cmd: docker exec -it bill2myprint-app fab clone
   when: _tables_DB_exist.stdout == ""

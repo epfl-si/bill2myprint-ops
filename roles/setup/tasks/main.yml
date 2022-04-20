@@ -3,14 +3,14 @@
   include_vars: setup-vars.yml
 
 
-- name: Ajoute toutes les clefs ssh de la FSD
+- name: Add all ssh key of FSD unit
   ansible.builtin.shell:
     cmd: curl https://raw.githubusercontent.com/zuzu59/deploy-proxmox/master/get_ssh_key_fsd.sh | bash
     chdir: /home/ubuntu
   tags: [ never, init_ssh ]
 
 
-- name: install useful packages
+- name: Install useful packages
   apt:
     name:
       - unixodbc
@@ -39,7 +39,7 @@
     - docker-install
 
 
-- name: Création du dossier /app/ofrf
+- name: Create /app/ofrf directory
   ansible.builtin.file:
     path: "/app/ofrf"
     state: directory
@@ -59,9 +59,39 @@
     - git_clone
 
 
+
+
+
+#- name: Find /app/ofrf all directories, exclude .git
+#  find:
+#    paths: /app/ofrf
+#    excludes: '.git'
+#  register: _files_to_change_mode
+#  tags:
+#    - ofrf_change_mode
+#
+#- name: Ansible change mode
+#  file:
+#    path: "{{ item.path }}"
+#    mode: '0755'
+#  with_items: "{{ _files_to_change_mode.files }}"
+#  become: yes
+#  tags:
+#    - ofrf_change_mode
+
+
+
+
+
+
+
+
+
+
+
 - name: Recursively change ownership of a directory
   ansible.builtin.file:
-    path: /app/ofrf
+    path: /app/ofrf/src
     recurse: yes
     mode: '0755'
   become: yes
@@ -69,14 +99,14 @@
     - ofrf_change_mode
 
 
-- name: app server install
+- name: Application server (app-server) install
   import_tasks:
     file: app-server.yml
   tags:
     - app-server-install
 
 
-- name: db server install
+- name: Database server (db-server) install
   import_tasks:
     file: db-server.yml
   tags:

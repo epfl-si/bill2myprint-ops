@@ -1,4 +1,4 @@
-- name: symbolic link exist ?
+- name: Symbolic link exist ?
   ansible.builtin.shell:
     cmd: docker exec bill2myprint-app /bin/bash -c 'ls -al /app/src/config/settings/default.py 2>&1 | grep "/app/src/config/settings/dockercompose.py"' || true
   ignore_errors: true

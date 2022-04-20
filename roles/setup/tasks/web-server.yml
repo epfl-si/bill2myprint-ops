@@ -17,7 +17,7 @@
 #   tags: web-msg
 #   become: yes
 
-- name: Crée le fichier de bienvenue sur le serveur WEB
+- name: Create welcome file on the WEB server
   ansible.builtin.template:
     src: index.html
     dest: /home/ubuntu/web/index.html

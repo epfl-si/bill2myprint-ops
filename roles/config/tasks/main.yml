@@ -1,25 +1,25 @@
-- name: fab clone
+- name: Cloning repository (fab clone)
   import_tasks:
     file: fab-clone.yml
   tags:
     - fab-clone
 
 
-- name: symbolic link
+- name: Symbolic link
   import_tasks:
     file: symbolic-link.yml
   tags:
     - symbolic-link
 
 
-- name: migrate
+- name: Migrate
   import_tasks:
     file: migrate.yml
   tags:
     - migrate
 
 
-- name: runserver
+- name: Run server (runserver)
   import_tasks:
     file: runserver.yml
   tags:
