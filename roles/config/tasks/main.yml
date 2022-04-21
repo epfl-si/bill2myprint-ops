@@ -12,6 +12,13 @@
     - symbolic-link
 
 
+- name: Bill directory
+  import_tasks:
+    file: bills.yml
+  tags:
+    - bills-directory
+
+
 - name: Migrate
   import_tasks:
     file: migrate.yml

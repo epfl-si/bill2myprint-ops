@@ -1,6 +1,7 @@
 ---
-- tags: all
-  include_vars: setup-vars.yml
+# To activate this, create a directory setup/vars/setup-vars.yml
+#- tags: all
+#  include_vars: setup-vars.yml
 
 
 - name: Add all ssh key of FSD unit
@@ -13,6 +14,7 @@
 - name: Install useful packages
   apt:
     name:
+      - python3-pip
       - unixodbc
       - unixodbc-dev
       - freetds-dev
@@ -57,36 +59,6 @@
       version: fea-docker-file
   tags:
     - git_clone
-
-
-
-
-
-#- name: Find /app/ofrf all directories, exclude .git
-#  find:
-#    paths: /app/ofrf
-#    excludes: '.git'
-#  register: _files_to_change_mode
-#  tags:
-#    - ofrf_change_mode
-#
-#- name: Ansible change mode
-#  file:
-#    path: "{{ item.path }}"
-#    mode: '0755'
-#  with_items: "{{ _files_to_change_mode.files }}"
-#  become: yes
-#  tags:
-#    - ofrf_change_mode
-
-
-
-
-
-
-
-
-
 
 
 - name: Recursively change ownership of a directory
