@@ -3,10 +3,7 @@
     name: bill2myprint-app
     build:
       path: '/app/ofrf'
-#      args:
-#        LARADOCK_PHP_VERSION: '{{ PHP_VERSION }}'
       nocache: no
-    force_source: yes
     source: build
   tags:
     - build_app
