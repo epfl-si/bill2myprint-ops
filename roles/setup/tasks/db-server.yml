@@ -13,5 +13,6 @@
     container_default_behavior: no_defaults
     networks:
       - name: 'ofrf_network'
+    network_mode: default
   tags:
     - go_db
