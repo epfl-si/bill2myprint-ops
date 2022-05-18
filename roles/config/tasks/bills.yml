@@ -2,7 +2,7 @@
 - name: Bill directory exists ?
   ansible.builtin.shell:
     cmd: docker exec -it bill2myprint-app sh -c "test -d /app/src/bill2myprint/media/pdf && echo 'It exists'"
-  ignore_errors: true
+  failed_when: false
   changed_when: false
   register: _bill_directory_exists
 
