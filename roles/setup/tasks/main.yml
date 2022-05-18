@@ -57,6 +57,7 @@
       dest: /app/ofrf
       force: yes
       version: fea-docker-file
+      accept_hostkey: yes
   tags:
     - git_clone
 
