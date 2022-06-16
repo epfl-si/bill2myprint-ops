@@ -21,7 +21,7 @@ cd "$(dirname "$0")"; cd "$(/bin/pwd)"
 git_current_branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 case "$git_current_branch" in
     "") : ;;
-    *) playbook_flags="$playbook_flags -e git_current_branch=$git_current_branch" ;;
+    *) playbook_flags="$playbook_flags -e @vars/global_vars.yml -e git_current_branch=$git_current_branch" ;;
 esac
 
 warn () {
@@ -62,7 +62,7 @@ platform_check () {
 #   fi
 # }
 
-inventory_mode="test"
+inventory_mode="prod"
 inventories () {
     case "$inventory_mode" in
         *test*) echo "-i inventory/test.yml" ;;
