@@ -56,7 +56,7 @@
       repo: git@github.com:epfl-si/bill2myprint.git
       dest: /app/ofrf
       force: yes
-      version: fea-docker-file
+      version: master
       accept_hostkey: yes
   tags:
     - git_clone
@@ -84,3 +84,4 @@
     file: db-server.yml
   tags:
     - db-server-install
+  when: runenv == 'test'

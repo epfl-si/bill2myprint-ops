@@ -3,13 +3,30 @@
     file: fab-clone.yml
   tags:
     - fab-clone
+  when: runenv != 'prod'
 
 
-- name: Symbolic link
+- name: Create secrets.json
+  import_tasks:
+    file: secrets.yml
+  tags:
+    - app-secrets
+#  when: runenv == 'prod'
+
+
+- name: Symbolic link (test environment)
   import_tasks:
     file: symbolic-link.yml
   tags:
     - symbolic-link
+  when: runenv != 'prod'
+
+- name: Symbolic link (prod environment)
+  import_tasks:
+    file: symbolic-link-prod.yml
+  tags:
+    - symbolic-link
+  when: runenv == 'prod'
 
 
 - name: Bill directory
@@ -19,11 +36,20 @@
     - bills-directory
 
 
+- name: Uniflow connection database
+  import_tasks:
+    file: uniflow.yml
+  tags:
+    - uniflow-sql-files
+  when: runenv == 'prod'
+
+
 - name: Migrate
   import_tasks:
     file: migrate.yml
   tags:
     - migrate
+  when: runenv != 'prod'
 
 
 - name: Run server (runserver)
