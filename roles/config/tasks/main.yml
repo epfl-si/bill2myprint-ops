@@ -11,7 +11,7 @@
     file: secrets.yml
   tags:
     - app-secrets
-#  when: runenv == 'prod'
+  when: runenv == 'prod'
 
 
 - name: Symbolic link (test environment)
