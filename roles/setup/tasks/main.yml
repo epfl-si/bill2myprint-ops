@@ -56,7 +56,7 @@
       repo: git@github.com:epfl-si/bill2myprint.git
       dest: /app/ofrf
       force: yes
-      version: master
+      version: remove-secrets-json
       accept_hostkey: yes
   tags:
     - git_clone

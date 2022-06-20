@@ -4,11 +4,10 @@ all:
       ansible_host: 10.95.80.225
       ansible_port: 22
       ansible_user: ubuntu
-      toto_dir: "/home/ubuntu/toto1204"
       web_server_msg: "Hello, this is the prod server itsmprnt0019"
 
       ### Secrets env vars ######################################
-      _ofrf_secrets: "{{ lookup('file', '/keybase/team/epfl_idevfsd/ofrf/secrets.yml') | from_yaml }}"
+      _ofrf_secrets: "{{ lookup('file', '/keybase/team/epfl_idevfsd/ofrf/secrets-prod.yml') | from_yaml }}"
 
   vars:
     RUNENV: prod
