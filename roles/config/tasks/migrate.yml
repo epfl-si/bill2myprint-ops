@@ -4,5 +4,5 @@
   register: _MIGRATE_exist
   changed_when: "_MIGRATE_exist.stdout.find('No migrations to apply') == -1"
 
-- debug:
-    var: _MIGRATE_exist
+#- debug:
+#    var: _MIGRATE_exist
