@@ -21,8 +21,8 @@
   register: _odbc_freetds
 
 
-- debug:
-    var: _odbc_freetds.stdout
+#- debug:
+#    var: _odbc_freetds.stdout
 
 
 - name: Search if "[FreeTDS]" is already in file
@@ -72,8 +72,8 @@
   register: _odbcinst_freetds
 
 
-- debug:
-    var: _odbcinst_freetds.stdout
+#- debug:
+#    var: _odbcinst_freetds.stdout
 
 
 - name: Search if "[FreeTDS]" is already in file
@@ -98,39 +98,3 @@
   ansible.builtin.shell:
     cmd: docker cp ./odbcinst.ini bill2myprint-app:/etc/odbcinst.ini
   when: _odbcinst_freetds.stdout.find('[FreeTDS]') == -1
-
-
-#
-#- name: Check /etc/odbcinst.ini exists
-#  stat:
-#    path: /etc/odbcinst.ini
-#  register: _odbcinst_exists
-#
-#
-#- name: Create /etc/odbcinst.ini, if it doesnt exist already
-#  file:
-#    path: /etc/odbcinst.ini
-#    state: touch
-#  when: not _odbcinst_exists.stat.exists
-#
-#
-#- name: Insert FreeTDS config into /etc/odbcinst.ini
-#  ansible.builtin.shell: |
-#    docker exec -it bill2myprint-app sudo cat <<EOF >> /etc/odbcinst.ini
-#    [FreeTDS]
-#    Description=TDS driver (Sybase/MS SQL)
-#    Driver=libtdsodbc.so
-#    Setup=libtdsS.so
-#    CPTimeout=
-#    CPReuse=
-#    UsageCount=2
-#    EOF
-
-
-#- name: Create bill directory in src/bill2myprint
-#  ansible.builtin.shell: |
-#    docker exec -it bill2myprint-app mkdir /app/src/bill2myprint/media &&
-#    docker exec -it bill2myprint-app mkdir /app/src/bill2myprint/media/pdf &&
-#    docker exec -it bill2myprint-app chown 1000:1000 /app/src/bill2myprint/media &&
-#    docker exec -it bill2myprint-app chown 1000:1000 /app/src/bill2myprint/media/pdf
-#  when: _bill_directory_exists.stdout == ""

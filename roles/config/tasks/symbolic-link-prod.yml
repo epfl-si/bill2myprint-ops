@@ -5,16 +5,16 @@
   changed_when: false
   register: _ln_exist
 
-- debug:
-    var: _ln_exist
-
-- debug:
-    msg: "ln exist"
-  when: _ln_exist.stdout != ""
-
-- debug:
-    msg: "ln doesn't exist"
-  when: _ln_exist.stdout == ""
+#- debug:
+#    var: _ln_exist
+#
+#- debug:
+#    msg: "ln exist"
+#  when: _ln_exist.stdout != ""
+#
+#- debug:
+#    msg: "ln doesn't exist"
+#  when: _ln_exist.stdout == ""
 
 - name: Create default.py symbolic link from dockercompose.py (prod environment)
   ansible.builtin.shell:

@@ -1,3 +1,17 @@
+TODO:
+=====
+
+Déploiement en producion avec aiguillage sur les bonnes bases de données :
+Ex:  https://gitlab.com/epfl-isasfsd/go-ops/-/blob/feature/local/ansible/roles/services/traefik/tasks/main.yml#L40
+
+Récupération des secrets
+
+
+
+
+
+Oldies :
+
 Contributing
 ============
 

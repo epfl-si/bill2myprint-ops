@@ -42,4 +42,3 @@
     name: ofrf_network
   tags:
     - create_docker_network
-
