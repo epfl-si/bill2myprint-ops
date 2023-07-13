@@ -1,28 +1,18 @@
-- name: Build app (django) image
-  community.docker.docker_image:
-    name: bill2myprint-app
-    build:
-      path: '/app/ofrf'
-      nocache: no
-    source: build
+- name: Move Dockerfile to /app/ofrf
+  ansible.builtin.copy:
+    src: /app/ofrf/docker/ansible/Dockerfile
+    dest: /app/ofrf/Dockerfile
+    remote_src: yes
   tags:
     - build_app
 
 
-- name: Create app container
-  community.docker.docker_container:
+- name: Build Dockerfile to create app image
+  community.docker.docker_image:
     name: bill2myprint-app
-    image: bill2myprint-app
-    hostname: app
-    state: started
-    restart_policy: 'unless-stopped'
-    volumes:
-      - /app/ofrf:/app
-    ports:
-      - 8008:8000
-    container_default_behavior: no_defaults
-    networks:
-      - name: 'ofrf_network'
-    network_mode: default
+    build:
+      path: '/app/ofrf/'
+      nocache: no
+    source: build
   tags:
-    - go_app
+    - build_app

@@ -1,20 +1,42 @@
-- name: Getting process IDs of the process
-  pids:
-      name: python
-  register: _runserver_running
+- name: Create app container
+  community.docker.docker_container:
+    name: bill2myprint-app
+    image: bill2myprint-app
+    command: python src/manage.py runserver --settings="config.settings.docker-test" 0.0.0.0:8000
+    hostname: app
+    state: started
+    restart_policy: 'unless-stopped'
+    volumes:
+      - /app/ofrf:/app
+    ports:
+      - 8008:8000
+    container_default_behavior: no_defaults
+    networks:
+      - name: 'ofrf_network'
+    network_mode: default
+  tags:
+    - go_app
+  when: runenv == 'test'
 
-- debug:
-    var: _runserver_running
 
-- debug:
-    msg: "runserver running"
-  when: _runserver_running.pids != []
-
-- debug:
-    msg: "runserver doesn't run"
-  when: _runserver_running.pids == []
-
-- name: Run runserver
-  ansible.builtin.shell:
-    cmd: docker exec -t bill2myprint-app python src/manage.py runserver 0.0.0.0:8000 &
-  when: _runserver_running.pids == []
+- name: Create app container
+  community.docker.docker_container:
+    name: bill2myprint-app
+    image: bill2myprint-app
+    command: python src/manage.py runserver --settings="config.settings.docker-prod" 0.0.0.0:8000
+    hostname: app
+    state: started
+    restart_policy: 'unless-stopped'
+    volumes:
+      - /app/ofrf:/app
+      - "{{ ofrf_home }}/odbc.ini:/etc/odbc.ini"
+      - "{{ ofrf_home }}/odbcinst.ini:/etc/odbcinst.ini"
+    ports:
+      - 8008:8000
+    container_default_behavior: no_defaults
+    networks:
+      - name: 'ofrf_network'
+    network_mode: default
+  tags:
+    - go_app
+  when: runenv == 'prod'

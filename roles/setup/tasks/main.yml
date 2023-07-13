@@ -1,15 +1,4 @@
 ---
-# To activate this, create a directory setup/vars/setup-vars.yml
-#- tags: all
-#  include_vars: setup-vars.yml
-
-
-- name: Add all ssh key of FSD unit
-  ansible.builtin.shell:
-    cmd: curl https://raw.githubusercontent.com/zuzu59/deploy-proxmox/master/get_ssh_key_fsd.sh | bash
-    chdir: /home/ubuntu
-  tags: [ never, init_ssh ]
-
 
 - name: Install useful packages
   apt:

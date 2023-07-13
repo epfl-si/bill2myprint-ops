@@ -1,54 +1,57 @@
-- name: Cloning database (fab clone)
-  import_tasks:
-    file: fab-clone.yml
+---
+
+- name: Create secrets.json if it does not exist
+  ansible.builtin.copy:
+    content: |
+      {
+        "SECRET_KEY": "{{ _ofrf_secrets["SECRET_KEY"] }}",
+        "OUR_DB_HOST": "{{ _ofrf_secrets["OUR_DB_HOST"] }}",
+        "OUR_DB_NAME": "{{ _ofrf_secrets["OUR_DB_NAME"] }}",
+        "OUR_DB_PORT": "{{ _ofrf_secrets["OUR_DB_PORT"] }}",
+        "OUR_DB_USER": "{{ _ofrf_secrets["OUR_DB_USER"] }}",
+        "OUR_DB_PASSWORD": "{{ _ofrf_secrets["OUR_DB_PASSWORD"] }}",
+
+        "MYPRINT_DB_HOST": "{{ _ofrf_secrets["MYPRINT_DB_HOST"] }}",
+        "MYPRINT_DB_NAME": "{{ _ofrf_secrets["MYPRINT_DB_NAME"] }}",
+        "MYPRINT_DB_PORT": "{{ _ofrf_secrets["MYPRINT_DB_PORT"] }}",
+        "MYPRINT_DB_USER": "{{ _ofrf_secrets["MYPRINT_DB_USER"] }}",
+        "MYPRINT_DB_PASSWORD": "{{ _ofrf_secrets["MYPRINT_DB_PASSWORD"] }}",
+
+        "CADI_DB_HOST": "{{ _ofrf_secrets["CADI_DB_HOST"] }}",
+        "CADI_DB_NAME": "{{ _ofrf_secrets["CADI_DB_NAME"] }}",
+        "CADI_DB_PORT": "{{ _ofrf_secrets["CADI_DB_PORT"] }}",
+        "CADI_DB_USER": "{{ _ofrf_secrets["CADI_DB_USER"] }}",
+        "CADI_DB_PASSWORD": "{{ _ofrf_secrets["CADI_DB_PASSWORD"] }}"
+      }
+    dest: /app/ofrf/secrets.json
   tags:
-    - fab-clone
-  when: runenv != 'prod'
+    - secrets
 
 
-- name: Create secrets.json
-  import_tasks:
-    file: secrets.yml
-  tags:
-    - app-secrets
-
-
-- name: Symbolic link (test environment)
-  import_tasks:
-    file: symbolic-link.yml
+- name: Create a symbolic link
+  ansible.builtin.file:
+    src: "/app/ofrf/src/config/settings/docker-{{ runenv }}.py"
+    dest: /app/ofrf/src/config/settings/default.py
+    state: link
   tags:
     - symbolic-link
-  when: runenv != 'prod'
-
-- name: Symbolic link (prod environment)
-  import_tasks:
-    file: symbolic-link-prod.yml
-  tags:
-    - symbolic-link
-  when: runenv == 'prod'
 
 
-- name: Bill directory
-  import_tasks:
-    file: bills.yml
-  tags:
-    - bills-directory
+- name: Create Bill directory if it does not exist
+  ansible.builtin.file:
+    path: /app/ofrf/src/bill2myprint/media/pdf
+    state: directory
+    owner: 1000
+    group: 1000
 
 
 - name: Uniflow connection database
   import_tasks:
     file: uniflow.yml
+  become: yes
   tags:
     - uniflow-sql-files
   when: runenv == 'prod'
-
-
-- name: Migrate
-  import_tasks:
-    file: migrate.yml
-  tags:
-    - migrate
-  when: runenv != 'prod'
 
 
 - name: Run server (runserver)
@@ -56,4 +59,4 @@
     file: runserver.yml
   tags:
     - runserver
-#  when: runenv == 'test'
+  when: runenv == 'test'

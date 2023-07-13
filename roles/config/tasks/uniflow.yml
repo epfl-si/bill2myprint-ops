@@ -1,100 +1,33 @@
 ## Manage /etc/odbc.ini
 
-- name: odbc.ini exists ?
-  ansible.builtin.shell:
-    cmd: docker exec -it bill2myprint-app sh -c "test -d /etc/odbc.ini && echo 'It exists'"
-  failed_when: false
-  changed_when: false
-  register: _odbc_in_docker_exists
+- name: Create {{ ofrf_home }} if it does not exist
+  ansible.builtin.file:
+    path: "{{ ofrf_home }}"
+    state: directory
 
 
-- name: copy odbc.ini if exists
-  ansible.builtin.shell:
-    cmd: docker cp bill2myprint-app:/etc/odbc.ini .
-  when: _odbc_in_docker_exists.stdout.find('It exists') != -1
-
-
-- name: Open odbc.ini file
-  shell: cat ./odbc.ini
-  failed_when: false
-  changed_when: false
-  register: _odbc_freetds
-
-
-#- debug:
-#    var: _odbc_freetds.stdout
-
-
-- name: Search if "[FreeTDS]" is already in file
-  debug: msg="[FreeTDS] exists"
-  when: _odbc_freetds.stdout.find('[FreeTDS]') != -1
-
-
-- name: Add FreeTDS config into odbc.ini if "[FreeTDS]" is not in file
-  ansible.builtin.shell: |
-    cat <<EOF >> ./odbc.ini
-    [FreeTDS]
-    Description=FreeTDS Driver
-    Driver=/usr/lib/x86_64-linux-gnu/odbc/libtdsodbc.so
-    Setup=/usr/lib/x86_64-linux-gnu/odbc/libtdsS.so
-    CPTimeout=
-    CPReuse=
-    EOF
-  when: _odbc_freetds.stdout.find('[FreeTDS]') == -1
-
-
-- name: copy odbc.ini if exists
-  ansible.builtin.shell:
-    cmd: docker cp ./odbc.ini bill2myprint-app:/etc/odbc.ini
-  when: _odbc_freetds.stdout.find('[FreeTDS]') == -1
+- name: Add FreeTDS config into odbc.ini
+  ansible.builtin.copy:
+    content: |
+      [FreeTDS]
+      Description=FreeTDS Driver
+      Driver=/usr/lib/x86_64-linux-gnu/odbc/libtdsodbc.so
+      Setup=/usr/lib/x86_64-linux-gnu/odbc/libtdsS.so
+      CPTimeout=
+      CPReuse=
+    dest: "{{ ofrf_home }}/odbc.ini"
 
 
 ## Manage /etc/odbcinst.ini
 
-- name: odbcinst.ini exists ?
-  ansible.builtin.shell:
-    cmd: docker exec -it bill2myprint-app sh -c "test -d /etc/odbcinst.ini && echo 'It exists'"
-  failed_when: false
-  changed_when: false
-  register: _odbcinst_in_docker_exists
-
-
-- name: copy odbcinst.ini if exists
-  ansible.builtin.shell:
-    cmd: docker cp bill2myprint-app:/etc/odbcinst.ini .
-  when: _odbcinst_in_docker_exists.stdout.find('It exists') != -1
-
-
-- name: Open odbcinst.ini file
-  shell: cat ./odbcinst.ini
-  failed_when: false
-  changed_when: false
-  register: _odbcinst_freetds
-
-
-#- debug:
-#    var: _odbcinst_freetds.stdout
-
-
-- name: Search if "[FreeTDS]" is already in file
-  debug: msg="[FreeTDS] exists"
-  when: _odbcinst_freetds.stdout.find('[FreeTDS]') != -1
-
-
-- name: Add FreeTDS config into odbcinst.ini if "[FreeTDS]" is not in file
-  ansible.builtin.shell: |
-    cat <<EOF >> ./odbcinst.ini
-    [FreeTDS]
-    Description=TDS driver (Sybase/MS SQL)
-    Driver=libtdsodbc.so
-    Setup=libtdsS.so
-    CPTimeout=
-    CPReuse=
-    UsageCount=2
-  when: _odbcinst_freetds.stdout.find('[FreeTDS]') == -1
-
-
-- name: copy odbcinst.ini if exists
-  ansible.builtin.shell:
-    cmd: docker cp ./odbcinst.ini bill2myprint-app:/etc/odbcinst.ini
-  when: _odbcinst_freetds.stdout.find('[FreeTDS]') == -1
+- name: Add FreeTDS config into odbcinst.ini
+  ansible.builtin.copy:
+    content: |
+      [FreeTDS]
+      Description=TDS driver (Sybase/MS SQL)
+      Driver=libtdsodbc.so
+      Setup=libtdsS.so
+      CPTimeout=
+      CPReuse=
+      UsageCount=2
+    dest: "{{ ofrf_home }}/odbcinst.ini"

@@ -29,6 +29,7 @@
     state: present
   become: yes
 
+
 - name: Ensure ubuntu user in docker group
   user:
     name: ubuntu
@@ -37,8 +38,17 @@
     state: present
   become: yes
 
+
+- name: Ensure docker deamon is running
+  service:
+    name: docker
+    state: started
+  become: true
+
+
 - name: Create the docker network
   community.docker.docker_network:
     name: ofrf_network
+  become: yes
   tags:
     - create_docker_network

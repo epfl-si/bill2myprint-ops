@@ -1,3 +1,6 @@
 ---
 runenv: "{{ RUNENV | default('test') }}"
 keybase: /keybase/team/ofrf
+
+ofrf_home: /srv/ofrf/
+ofrf_data: /app/ofrf/src/data

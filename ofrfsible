@@ -62,7 +62,7 @@ platform_check () {
 #   fi
 # }
 
-inventory_mode="prod"
+inventory_mode="test"
 inventories () {
     case "$inventory_mode" in
         *test*) echo "-i inventory/test.yml" ;;

@@ -1,8 +1,0 @@
-- name: Migrate
-  ansible.builtin.shell:
-    cmd: docker exec -it bill2myprint-app python src/manage.py migrate
-  register: _MIGRATE_exist
-  changed_when: "_MIGRATE_exist.stdout.find('No migrations to apply') == -1"
-
-#- debug:
-#    var: _MIGRATE_exist

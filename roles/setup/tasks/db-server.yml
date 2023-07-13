@@ -1,18 +1,38 @@
+- name: Create {{ ofrf_data }} directory if it doesn't exist
+  ansible.builtin.file:
+    path: "{{ ofrf_data }}"
+    state: directory
+
+
+- name: Create init.sql
+  ansible.builtin.copy:
+    content: |
+      CREATE DATABASE ofrf;
+      CREATE USER 'ofrf'@'%' IDENTIFIED BY 'ofrf';
+      GRANT ALL PRIVILEGES ON ofrf.* TO 'ofrf'@'%';
+    dest: "{{ ofrf_data }}/01-init.sql"
+
+
+- name: Copy dbproddump.sql if it doesn't exist
+  ansible.builtin.copy:
+    content: |
+      USE ofrf;
+      {{lookup('ansible.builtin.file', './data/dbproddump.sql') }}
+    dest: "{{ ofrf_data }}/02-dbproddump.sql"
+
+
 - name: Create db container
   community.docker.docker_container:
     name: local-mysql
-    image: mysql:5.7
+    image: mariadb:10.6
     hostname: db
     state: started
     restart_policy: 'unless-stopped'
     env:
-      MYSQL_ROOT_PASSWORD: toto
-      MYSQL_DATABASE: ofrf
-      MYSQL_USER: ofrf
-      MYSQL_PASSWORD: ofrf
+      MARIADB_ROOT_PASSWORD: ofrf
+    volumes:
+      - "{{ ofrf_data }}:/docker-entrypoint-initdb.d"
     container_default_behavior: no_defaults
     networks:
       - name: 'ofrf_network'
     network_mode: default
-  tags:
-    - go_db
