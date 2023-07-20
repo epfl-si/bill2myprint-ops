@@ -1,0 +1,19 @@
+- name: Create nginx/service
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: nginx-service
+        namespace: ofrf
+        labels:
+          app: nginx
+      spec:
+        ports:
+          - name: http-port
+            port: 80
+            targetPort: 8080
+        type: ClusterIP
+        selector:
+          app: nginx

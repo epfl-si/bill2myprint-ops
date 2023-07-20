@@ -1,9 +1,8 @@
 - name: Check if environment is set
   hosts: all
   tasks:
-    -
-      debug:
-        msg: "Starting ansible with {{ runenv }} environment."
+    - debug:
+        msg: "Starting ansible with {{ runinfra }}-{{ runenv }} environment."
 
 
 - name: Setup project

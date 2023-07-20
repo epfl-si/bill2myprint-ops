@@ -1,0 +1,19 @@
+- name: Create db/service
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: mariadb-service
+        namespace: ofrf
+        labels:
+          app: mariadb
+      spec:
+        ports:
+          - name: mariadb-port
+            port: 3306
+            targetPort: 3306
+        type: ClusterIP
+        selector:
+          app: mariadb

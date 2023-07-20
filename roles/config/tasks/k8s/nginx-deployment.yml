@@ -1,0 +1,71 @@
+- name: Create nginx/deployment
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: ofrf-nginx
+        namespace: ofrf
+        labels:
+          app: ofrf-nginx
+      spec:
+        replicas: 1
+        strategy:
+          type: RollingUpdate
+          rollingUpdate:
+            maxUnavailable: 1
+        selector:
+          matchLabels:
+            app: nginx
+        template:
+          metadata:
+            labels:
+              app: nginx
+          spec:
+            serviceAccountName: ofrf-nginx-service-account
+            affinity:
+              podAntiAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  - labelSelector:
+                      matchLabels:
+                        app: nginx
+                    topologyKey: kubernetes.io/hostname
+            containers:
+              - name: nginx
+                image: vsissp-harbor-p.epfl.ch/itsmprntd/nginx-unprivileged:1.23.1-alpine
+                imagePullPolicy: "IfNotPresent"
+                ports:
+                  - containerPort: 8080
+                    name: http-port
+                livenessProbe:
+                  tcpSocket:
+                    port: 8080
+                  initialDelaySeconds: 5
+                  timeoutSeconds: 3
+                  periodSeconds: 5
+                  successThreshold: 1
+                  failureThreshold: 2
+                readinessProbe:
+                  tcpSocket:
+                    port: 8080
+                  initialDelaySeconds: 5
+                  timeoutSeconds: 3
+                  periodSeconds: 5
+                  successThreshold: 1
+                  failureThreshold: 2
+                volumeMounts:
+                  - name: ofrf-static-files-volume
+                    mountPath: /static
+                    subPath: static
+                    readOnly: true
+                  - name: nginx-config-volume
+                    mountPath: /etc/nginx/conf.d
+                    readOnly: false
+            volumes:
+              - name: nginx-config-volume
+                configMap:
+                  name: nginx-config-configmap
+              - name: ofrf-static-files-volume
+                persistentVolumeClaim:
+                  claimName: ofrf-pvc

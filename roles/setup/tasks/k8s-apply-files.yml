@@ -1,0 +1,160 @@
+---
+# To activate this, create a directory setup/vars/setup-vars.yml
+#- tags: all
+#  include_vars: setup-vars.yml
+#
+#  https://docs.ansible.com/ansible/latest/collections/kubernetes/core/k8s_module.html
+
+
+#- debug:
+#    msg: "Setup: nothing here now."
+
+
+#- name: Create a k8s namespace
+#  kubernetes.core.k8s:
+#    name: ofrf
+#    api_version: v1
+#    kind: Namespace
+#    state: present
+
+
+- name: Log in git repository
+  ansible.builtin.shell:
+    cmd:
+      docker login ghcr.io
+      #docker pull ghcr.io/epfl-si/bill2myprint:latest
+  changed_when: false
+
+
+#- name: Pull image in git repository
+#  ansible.builtin.shell:
+#    cmd:
+#      docker pull ghcr.io/epfl-si/bill2myprint:latest
+
+- name: Push image from github to Harbor
+  ansible.builtin.shell:
+    cmd:
+      docker login vsissp-harbor-p.epfl.ch
+  changed_when: false
+
+#- name: Push image from github to Harbor
+#  ansible.builtin.shell:
+#    cmd:
+#      docker tag ghcr.io/epfl-si/bill2myprint:latest vsissp-harbor-p.epfl.ch/itsmprntd/ofrf:latest
+#
+#- name: Push image from github to Harbor
+#  ansible.builtin.shell:
+#    cmd:
+#      docker push vsissp-harbor-p.epfl.ch/itsmprntd/ofrf:latest
+
+
+#- name: Pull image in git repository
+#  ansible.builtin.shell:
+#    cmd:
+#      docker login ghcr.io
+#      docker pull ghcr.io/epfl-si/bill2myprint:latest
+
+#- name: Push image from github to Harbor
+#  ansible.builtin.shell:
+#    cmd:
+#      docker login vsissp-harbor-p.epfl.ch
+#      docker tag ghcr.io/epfl-si/bill2myprint:latest vsissp-harbor-p.epfl.ch/itsmprntd/ofrf:latest
+#      docker push vsissp-harbor-p.epfl.ch/itsmprntd/ofrf:latest
+
+
+- name: Clone bill2myprint repo
+  git:
+    repo: git@github.com:epfl-si/bill2myprint.git
+    dest: /tmp/ofrf
+    force: yes
+    version: fea-kubernetes
+    accept_hostkey: yes
+  tags:
+    - git_clone
+
+
+
+
+
+
+#- name: Add all ssh key of FSD unit
+#  ansible.builtin.shell:
+#    cmd: curl https://raw.githubusercontent.com/zuzu59/deploy-proxmox/master/get_ssh_key_fsd.sh | bash
+#    chdir: /home/ubuntu
+#  tags: [ never, init_ssh ]
+#
+#
+#- name: Install useful packages
+#  apt:
+#    name:
+#      - python3-pip
+#      - unixodbc
+#      - unixodbc-dev
+#      - freetds-dev
+#      - tdsodbc
+#    state: present
+#    force_apt_get: yes
+#  become: yes
+#  tags:
+#    - install_packages
+#
+#
+#- name: Install python psutil package
+#  pip:
+#    name: psutil
+#    executable: pip3
+#  tags:
+#    - install_python_psutil
+#
+#
+#- name: Docker install
+#  import_tasks:
+#    file: docker-install.yml
+#  tags:
+#    - docker-install
+#
+#
+#- name: Create /app/ofrf directory
+#  ansible.builtin.file:
+#    path: "/app/ofrf"
+#    state: directory
+#    owner: ubuntu
+#    group: ubuntu
+#    mode: '0755'
+#  become: yes
+#
+#
+#- name: Clone bill2myprint repo
+#  git:
+#      repo: git@github.com:epfl-si/bill2myprint.git
+#      dest: /app/ofrf
+#      force: yes
+#      version: remove-secrets-json
+#      accept_hostkey: yes
+#  tags:
+#    - git_clone
+#
+#
+#- name: Recursively change ownership of a directory
+#  ansible.builtin.file:
+#    path: /app/ofrf/src
+#    recurse: yes
+#    mode: '0755'
+#  become: yes
+#  tags:
+#    - ofrf_change_mode
+#
+#
+#- name: Application server (app-server) install
+#  import_tasks:
+#    file: app-server.yml
+#  tags:
+#    - app-server-install
+#
+#
+#- name: Database server (db-server) install
+#  import_tasks:
+#    file: db-server.yml
+#  tags:
+#    - db-server-install
+#  when: runenv == 'test'

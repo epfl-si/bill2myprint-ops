@@ -1,0 +1,114 @@
+---
+
+- name: Apply app deployment
+  import_tasks:
+    file: ./k8s/app-deployment.yml
+  tags:
+    - apply-app-deployment
+
+
+- name: Apply app pvc
+  import_tasks:
+    file: ./k8s/app-pvc.yml
+  tags:
+    - apply-app-pvc
+
+
+- name: Apply app service
+  import_tasks:
+    file: ./k8s/app-service.yml
+  tags:
+    - apply-app-service
+
+
+- name: Apply app service account
+  import_tasks:
+    file: ./k8s/app-serviceaccount.yml
+  tags:
+    - apply-app-service-account
+
+
+- name: Apply db deployment
+  import_tasks:
+    file: ./k8s/db-deployment.yml
+  tags:
+    - apply-db-deployment
+
+
+#- name: Restore database from dump
+#  kubernetes.core.k8s_exec:
+#    namespace: ofrf
+#    pod: ofrf-mariadb
+#    command: mysql -h mariadb ofrf -u ofrf -pofrf < ../../../data/dbproddump.sql
+#  tags:
+#    - apply-db-restore
+
+
+- name: Apply db service
+  import_tasks:
+    file: ./k8s/db-service.yml
+  tags:
+    - apply-db-service
+
+
+- name: Apply db service account
+  import_tasks:
+    file: ./k8s/db-serviceaccount.yml
+  tags:
+    - apply-db-service-account
+
+
+- name: Apply nginx configmap
+  import_tasks:
+    file: ./k8s/nginx-configmap.yml
+  tags:
+    - apply-nginx-configmap
+
+
+- name: Apply nginx deployment
+  import_tasks:
+    file: ./k8s/nginx-deployment.yml
+  tags:
+    - apply-nginx-deployment
+
+
+- name: Apply nginx service
+  import_tasks:
+    file: ./k8s/nginx-service.yml
+  tags:
+    - apply-nginx-service
+
+
+- name: Apply nginx service account
+  import_tasks:
+    file: ./k8s/nginx-serviceaccount.yml
+  tags:
+    - apply-nginx-service-account
+
+
+- name: Apply nginx ingress
+  import_tasks:
+    file: ./k8s/nginx-ingress.yml
+  tags:
+    - apply-nginx-ingress
+
+
+- name: Apply rbac harbor pull
+  import_tasks:
+    file: ./k8s/rbac-harborpullsealedsecret.yml
+  tags:
+    - apply-rbac-harbor-pull
+
+
+#- name: Create rbac/restricted-role
+#  kubernetes.core.k8s:
+#    state: present
+#    src: /tmp/ofrf/k8s/dev/rbac/restricted-role.yml
+
+
+
+#- name: Create rbac/restricted-role-bindings-to-sa
+#  kubernetes.core.k8s:
+#    state: present
+#    src: /tmp/ofrf/k8s/dev/rbac/restricted-role-bindings-to-sa.yml
+

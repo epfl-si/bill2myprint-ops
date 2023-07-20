@@ -1,0 +1,17 @@
+- name: Create app/pvc
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: ofrf-pvc
+        namespace: ofrf
+      spec:
+        accessModes:
+          - ReadWriteMany
+        volumeMode: Filesystem
+        resources:
+          requests:
+            storage: 1Gi
+        volumeName: pv-nfs-svc0056mprntkd0001-1

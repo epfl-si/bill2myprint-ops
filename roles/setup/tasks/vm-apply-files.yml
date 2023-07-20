@@ -1,0 +1,76 @@
+---
+
+- name: Install useful packages
+  apt:
+    name:
+      - python3-pip
+      - unixodbc
+      - unixodbc-dev
+      - freetds-dev
+      - tdsodbc
+    state: present
+    force_apt_get: yes
+  become: yes
+  tags:
+    - install_packages
+
+
+- name: Install python psutil package
+  pip:
+    name: psutil
+    executable: pip3
+  tags:
+    - install_python_psutil
+
+
+- name: Docker install
+  import_tasks:
+    file: vm/docker-install.yml
+  tags:
+    - docker-install
+
+
+- name: Create /app/ofrf directory
+  ansible.builtin.file:
+    path: "/app/ofrf"
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+  become: yes
+
+
+- name: Clone bill2myprint repo
+  git:
+      repo: git@github.com:epfl-si/bill2myprint.git
+      dest: /app/ofrf
+      force: yes
+      version: master
+      accept_hostkey: yes
+  tags:
+    - git_clone
+
+
+- name: Recursively change ownership of a directory
+  ansible.builtin.file:
+    path: /app/ofrf/src
+    recurse: yes
+    mode: '0755'
+  become: yes
+  tags:
+    - ofrf_change_mode
+
+
+- name: Application server (app-server) install
+  import_tasks:
+    file: vm/app-server.yml
+  tags:
+    - app-server-install
+
+
+- name: Database server (db-server) install
+  import_tasks:
+    file: vm/db-server.yml
+  tags:
+    - db-server-install
+  when: runenv == 'test'

@@ -10,4 +10,5 @@ all:
       _ofrf_secrets: "{{ lookup('file', '/keybase/team/epfl_idevfsd/ofrf/secrets-test.yml') | from_yaml }}"
 
   vars:
+    RUNINFRA: vm
     RUNENV: test

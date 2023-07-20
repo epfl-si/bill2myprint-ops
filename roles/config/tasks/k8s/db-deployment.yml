@@ -1,0 +1,52 @@
+- name: Create db/deployment
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: ofrf-mariadb
+        namespace: ofrf
+        labels:
+          app: ofrf-mariadb
+      spec:
+        replicas: 1
+        strategy:
+          type: RollingUpdate
+          rollingUpdate:
+            maxUnavailable: 1
+        selector:
+          matchLabels:
+            app: mariadb
+        template:
+          metadata:
+            labels:
+              app: mariadb
+          spec:
+            serviceAccountName: ofrf-mariadb-service-account
+            containers:
+              - name: mariadb
+                image: vsissp-harbor-p.epfl.ch/itsmprntd/mariadb:10.4
+                imagePullPolicy: "IfNotPresent"
+                ports:
+                  - containerPort: 3306
+                    name: mariadb-port
+                env:
+                  - name: MARIADB_ROOT_PASSWORD
+                    value: "ofrf"
+                  - name: MARIADB_DATABASE
+                    value: "ofrf"
+                  - name: MARIADB_USER
+                    value: "ofrf"
+                  - name: MARIADB_PASSWORD
+                    value: "ofrf"
+                readinessProbe:
+                  tcpSocket:
+                    port: 3306
+                  initialDelaySeconds: 5
+                  periodSeconds: 10
+                livenessProbe:
+                  tcpSocket:
+                    port: 3306
+                  initialDelaySeconds: 15
+                  periodSeconds: 20

@@ -18,40 +18,23 @@
 
 cd "$(dirname "$0")"; cd "$(/bin/pwd)"
 
-git_current_branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
-case "$git_current_branch" in
-    "") : ;;
-    *) playbook_flags="$playbook_flags -e @vars/global_vars.yml -e git_current_branch=$git_current_branch" ;;
-esac
-
-warn () {
-    if [ -n "$1" ]; then
-        echo "$@" >&2
-    else
-        cat >&2
-    fi
-}
-
-fatal () {
-    warn "$@"
-    exit 1
-}
-
 platform_check () {
     if ! test -f ansible-deps-cache/.versions 2>/dev/null; then
       curl https://raw.githubusercontent.com/epfl-si/ansible.suitcase/master/install.sh | \
-            SUITCASE_ANSIBLE_VERSION=4.0.0 \
+            SUITCASE_ANSIBLE_VERSION=6.3.0 \
             SUITCASE_DIR=$PWD/ansible-deps-cache \
-            SUITCASE_PIP_EXTRA="bcrypt passlib openshift" \
+            SUITCASE_PIP_EXTRA="bcrypt passlib kubernetes" \
             SUITCASE_ANSIBLE_REQUIREMENTS=requirements.yml \
             SUITCASE_NO_EYAML=1 \
             SUITCASE_PYTHON_VERSIONS="3.8.5 3.8.2 3.8.9 3.9.7" \
             SUITCASE_NO_KEYBASE=1 \
+            SUITCASE_WITH_HELM=1 \
             bash -x
     fi
     export PATH="$PWD/ansible-deps-cache/bin:$PATH"
     export ANSIBLE_ROLES_PATH="$PWD/ansible-deps-cache/roles"
     export ANSIBLE_COLLECTIONS_PATHS="$PWD/ansible-deps-cache"
+    . "$PWD"/ansible-deps-cache/lib.sh
 #    oc_check
 }
 
@@ -62,17 +45,15 @@ platform_check () {
 #   fi
 # }
 
-inventory_mode="test"
-inventories () {
-    case "$inventory_mode" in
-        *test*) echo "-i inventory/test.yml" ;;
-    esac
-    case "$inventory_mode" in
-        *prod*)    echo "-i inventory/prod.yml" ;;
-    esac
-}
 
 ###########################################################################
+
+platform_check
+ensure_tkgi svc0056mprntkd0001 tkgi.epfl.ch ./tkgi-EPFL-CA.crt
+playbook_flags="$playbook_flags -e @vars/global_vars.yml -e git_current_branch=$git_current_branch"
+
+inventory_mode="test"
+infra="vm"
 
 mode=ansible-playbook
 
@@ -81,8 +62,14 @@ ansible_args=(-e "startsible_dir=$OLDPWD")
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
+        --k8s)
+            infra="k8s"
+            shift ;;
+        --dev)
+            inventory_mode="dev"
+            shift ;;
         --prod)
-            inventory_mode="$inventory_mode prod"
+            inventory_mode="prod"
             shift ;;
         -m) mode=ansible
             ansible_args+=("-m")
@@ -93,6 +80,11 @@ while [ "$#" -gt 0 ]; do
     esac
 done
 
+
+inventories () {
+    echo "-i inventory/$infra-$inventory_mode.yml"
+}
+
 # https://github.com/ansible/ansible/issues/32499, https://bugs.python.org/issue35219
 case "$(uname -s)" in
     Darwin) export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES ;;
@@ -100,10 +92,10 @@ esac
 
 set -e
 
-platform_check
 case "$mode" in
     ansible-playbook)
-        ansible-playbook $playbook_flags $(inventories) "${ansible_args[@]}" \
+        ansible-playbook $playbook_flags $(inventories) \
+                         "${ansible_args[@]}" \
                          $ansible_flags \
                          playbook.yml
         ;;

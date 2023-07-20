@@ -1,4 +1,5 @@
 ---
+runinfra: "{{ RUNINFRA }}"
 runenv: "{{ RUNENV | default('test') }}"
 keybase: /keybase/team/ofrf
 

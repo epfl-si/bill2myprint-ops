@@ -1,0 +1,102 @@
+- name: Create app/deployment
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: ofrf-app
+        namespace: ofrf
+        labels:
+          app: ofrf-app
+      spec:
+        replicas: 1
+        strategy:
+          type: RollingUpdate
+          rollingUpdate:
+            maxUnavailable: 1
+        selector:
+          matchLabels:
+            app: ofrf
+        template:
+          metadata:
+            labels:
+              app: ofrf
+          spec:
+            serviceAccountName: ofrf-service-account
+            affinity:
+              podAntiAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  - labelSelector:
+                      matchLabels:
+                        app: ofrf
+                    topologyKey: kubernetes.io/hostname
+            containers:
+              - name: app
+                image: vsissp-harbor-p.epfl.ch/itsmprntd/app:latest
+                #          imagePullPolicy: "IfNotPresent"
+                imagePullPolicy: "Always"
+                ports:
+                  - containerPort: 8000
+                    name: django-port
+                env:
+                  - name: SECRET_KEY
+                    value: "{{ _ofrf_secrets.SECRET_KEY }}"
+                  - name: DJANGO_SETTINGS_MODULE
+                    value: config.settings.k8s
+                  - name: DEBUG_MODE
+                    value: "false"
+                  - name: OFRF_DATABASE_HOST
+                    value: "{{ _ofrf_secrets.OFRF_DB_HOST }}"
+                  - name: OFRF_DATABASE_PORT
+                    value: "{{ _ofrf_secrets.OFRF_DB_PORT }}"
+                  - name: OFRF_DATABASE_NAME
+                    value: "{{ _ofrf_secrets.OFRF_DB_NAME }}"
+                  - name: OFRF_DATABASE_USER
+                    value: "{{ _ofrf_secrets.OFRF_DB_USER }}"
+                  - name: OFRF_DATABASE_PASSWORD
+                    value: "{{ _ofrf_secrets.OFRF_DB_PASSWORD }}"
+                  - name: MYPRINT_DATABASE_HOST
+                    value: "{{ _ofrf_secrets.MYPRINT_DB_HOST }}"
+                  - name: MYPRINT_DATABASE_PORT
+                    value: "{{ _ofrf_secrets.MYPRINT_DB_PORT }}"
+                  - name: MYPRINT_DATABASE_NAME
+                    value: "{{ _ofrf_secrets.MYPRINT_DB_NAME }}"
+                  - name: MYPRINT_DATABASE_USER
+                    value: "{{ _ofrf_secrets.MYPRINT_DB_USER }}"
+                  - name: MYPRINT_DATABASE_PASSWORD
+                    value: "{{ _ofrf_secrets.MYPRINT_DB_PASSWORD }}"
+                  - name: CADI_DATABASE_HOST
+                    value: "{{ _ofrf_secrets.CADI_DB_HOST }}"
+                  - name: CADI_DATABASE_PORT
+                    value: "{{ _ofrf_secrets.CADI_DB_PORT }}"
+                  - name: CADI_DATABASE_NAME
+                    value: "{{ _ofrf_secrets.CADI_DB_NAME }}"
+                  - name: CADI_DATABASE_USER
+                    value: "{{ _ofrf_secrets.CADI_DB_USER }}"
+                  - name: CADI_DATABASE_PASSWORD
+                    value: "{{ _ofrf_secrets.CADI_DB_PASSWORD }}"
+                readinessProbe:
+                  tcpSocket:
+                    port: 8000
+                  initialDelaySeconds: 5
+                  periodSeconds: 10
+                livenessProbe:
+                  tcpSocket:
+                    port: 8000
+                  initialDelaySeconds: 15
+                  periodSeconds: 20
+                volumeMounts:
+                  - name: ofrf-static-files-volume
+                    mountPath: /static
+                    subPath: static
+                    readOnly: false
+            securityContext:
+              fsGroup: 1000
+              runAsGroup: 1000
+              runAsNonRoot: true
+              runAsUser: 1000
+            volumes:
+              - name: ofrf-static-files-volume
+                persistentVolumeClaim:
+                  claimName: ofrf-pvc

@@ -1,0 +1,23 @@
+- name: Create nginx/ingress
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: networking.k8s.io/v1
+      kind: Ingress
+      metadata:
+        name: ofrf-ingress
+        namespace: ofrf
+        annotations:
+          kubernetes.io/ingress.class: contour
+      spec:
+        rules:
+          - host: dev-ofrf.epfl.ch
+            http:
+              paths:
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: nginx-service
+                      port:
+                        number: 80
