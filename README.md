@@ -1,6 +1,9 @@
 # bill2myprint-ops
 Ansible script to deploy bill2myprint (OFRF) service.
 
+The code of the application is located in :
+https://github.com/epfl-si/bill2myprint
+
 Commands
 ---------
 
