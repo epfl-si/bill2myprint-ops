@@ -67,7 +67,7 @@
     repo: git@github.com:epfl-si/bill2myprint.git
     dest: /tmp/ofrf
     force: yes
-    version: fea-kubernetes
+#    version: fea-kubernetes
     accept_hostkey: yes
   tags:
     - git_clone

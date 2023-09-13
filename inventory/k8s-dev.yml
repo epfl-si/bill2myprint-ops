@@ -13,3 +13,9 @@ all:
   vars:
     RUNINFRA: k8s
     RUNENV: dev
+    _harbor_pull_credential: "{{ _ofrf_secrets.harbor.pull_robot.name }}:{{ _ofrf_secrets.harbor.pull_robot.token }}"
+    harbor_pull_config:
+      auths:
+        "vsissp-harbor-p.epfl.ch":
+          "auth": "{{ _harbor_pull_credential | b64encode }}"
+
