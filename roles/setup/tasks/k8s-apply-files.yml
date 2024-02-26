@@ -19,11 +19,20 @@
 
 
 - name: Log in git repository
-  ansible.builtin.shell:
-    cmd:
-      docker login ghcr.io
-      #docker pull ghcr.io/epfl-si/bill2myprint:latest
+  docker_login:
+    registry: ghcr.io
+    username: "{{ _private_secrets.ghcrio.username }}"
+    password: "{{ _private_secrets.ghcrio.password }}"
+    reauthorize: yes
   changed_when: false
+
+
+#- name: Log in git repository
+#  ansible.builtin.shell:
+#    cmd:
+#      docker login ghcr.io
+#      #docker pull ghcr.io/epfl-si/bill2myprint:latest
+#  changed_when: false
 
 
 #- name: Pull image in git repository
@@ -31,11 +40,24 @@
 #    cmd:
 #      docker pull ghcr.io/epfl-si/bill2myprint:latest
 
+
+
 - name: Push image from github to Harbor
-  ansible.builtin.shell:
-    cmd:
-      docker login vsissp-harbor-p.epfl.ch
+  docker_login:
+    registry: vsissp-harbor-p.epfl.ch
+    username: "{{ _private_secrets.gaspar.user }}"
+    password: "{{ _private_secrets.gaspar.password }}"
+    reauthorize: yes
   changed_when: false
+
+#- name: Push image from github to Harbor
+#  ansible.builtin.shell:
+#    cmd:
+#      docker login vsissp-harbor-p.epfl.ch --username duratti --password fhdss78ofPA83562kdAAQW
+#  changed_when: false
+
+
+
 
 #- name: Push image from github to Harbor
 #  ansible.builtin.shell:
