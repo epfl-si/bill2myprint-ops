@@ -28,11 +28,11 @@
     - apply-app-service-account
 
 
-- name: Apply db deployment
-  import_tasks:
-    file: ./k8s/db-deployment.yml
-  tags:
-    - apply-db-deployment
+#- name: Apply db deployment
+#  import_tasks:
+#    file: ./k8s/db-deployment.yml
+#  tags:
+#    - apply-db-deployment
 
 
 #- name: Restore database from dump
@@ -44,18 +44,18 @@
 #    - apply-db-restore
 
 
-- name: Apply db service
-  import_tasks:
-    file: ./k8s/db-service.yml
-  tags:
-    - apply-db-service
+#- name: Apply db service
+#  import_tasks:
+#    file: ./k8s/db-service.yml
+#  tags:
+#    - apply-db-service
 
 
-- name: Apply db service account
-  import_tasks:
-    file: ./k8s/db-serviceaccount.yml
-  tags:
-    - apply-db-service-account
+#- name: Apply db service account
+#  import_tasks:
+#    file: ./k8s/db-serviceaccount.yml
+#  tags:
+#    - apply-db-service-account
 
 
 - name: Apply nginx configmap

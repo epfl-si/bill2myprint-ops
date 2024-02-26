@@ -23,7 +23,7 @@ platform_check () {
       curl https://raw.githubusercontent.com/epfl-si/ansible.suitcase/master/install.sh | \
             SUITCASE_ANSIBLE_VERSION=6.3.0 \
             SUITCASE_DIR=$PWD/ansible-deps-cache \
-            SUITCASE_PIP_EXTRA="bcrypt passlib kubernetes" \
+            SUITCASE_PIP_EXTRA="bcrypt passlib kubernetes docker" \
             SUITCASE_ANSIBLE_REQUIREMENTS=requirements.yml \
             SUITCASE_NO_EYAML=1 \
             SUITCASE_PYTHON_VERSIONS="3.8.5 3.8.2 3.8.9 3.9.7" \

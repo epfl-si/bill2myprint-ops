@@ -1,3 +1,17 @@
+- name: Create nginx/ingress TLS secret
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: v1
+      kind: Secret
+      type: kubernetes.io/tls
+      metadata:
+        name: ofrf-ingress-tls-secret
+        namespace: ofrf
+      data:
+        tls.crt: "{{ _ingress_tls_crt | b64encode }}"
+        tls.key: "{{ _ingress_tls_key | b64encode }}"
+
+
 - name: Create nginx/ingress
   kubernetes.core.k8s:
     state: present
@@ -8,8 +22,13 @@
         name: ofrf-ingress
         namespace: ofrf
         annotations:
+          ingress.kubernetes.io/force-ssl-redirect: "true"
           kubernetes.io/ingress.class: contour
       spec:
+        tls:
+          - hosts: 
+              - dev-ofrf.epfl.ch
+            secretName: ofrf-ingress-tls-secret
         rules:
           - host: dev-ofrf.epfl.ch
             http:
