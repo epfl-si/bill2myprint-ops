@@ -17,7 +17,7 @@
 
           server {
             listen 8080;
-            server_name dev-ofrf.epfl.ch;
+            server_name {{ ofrf_hostname }};
             charset utf-8;
 
             access_log  /var/log/nginx/access.log  custom;

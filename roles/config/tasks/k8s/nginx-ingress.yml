@@ -27,10 +27,10 @@
       spec:
         tls:
           - hosts: 
-              - dev-ofrf.epfl.ch
+              - "{{ ofrf_hostname }}"
             secretName: ofrf-ingress-tls-secret
         rules:
-          - host: dev-ofrf.epfl.ch
+          - host: "{{ ofrf_hostname }}"
             http:
               paths:
                 - path: /
