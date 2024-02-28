@@ -8,8 +8,8 @@
         name: ofrf-ingress-tls-secret
         namespace: ofrf
       data:
-        tls.crt: "{{ _ingress_tls_crt | b64encode }}"
-        tls.key: "{{ _ingress_tls_key | b64encode }}"
+        tls.crt: "{{ ingress_tls_crt | b64encode }}"
+        tls.key: "{{ ingress_tls_key | b64encode }}"
 
 
 - name: Create nginx/ingress

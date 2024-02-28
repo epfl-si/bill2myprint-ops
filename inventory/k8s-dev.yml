@@ -11,8 +11,6 @@ all:
       ### Secrets env vars ######################################
       _ofrf_secrets: "{{ lookup('file', '/keybase/team/epfl_idevfsd/ofrf/secrets-dev.yml') | from_yaml }}"
       _private_secrets: "{{ lookup('file', '/keybase/private/duratti/password-personnal.yml') | from_yaml }}"
-      _ingress_tls_crt: "{{ lookup('file', '/keybase/team/epfl_idevfsd/ofrf/dev-ofrf.crt') }}"
-      _ingress_tls_key: "{{ lookup('file', '/keybase/team/epfl_idevfsd/ofrf/dev-ofrf.key') }}"
 
   vars:
     RUNINFRA: k8s

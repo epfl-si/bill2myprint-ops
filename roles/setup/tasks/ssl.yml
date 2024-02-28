@@ -1,0 +1,77 @@
+---
+
+- name: Create ssl directory if it does not exist
+  ansible.builtin.file:
+    path: ./ssl
+    state: directory
+
+
+- name: Check if config files for generating autosigned ssl exist
+  stat: 
+    path: "./ssl/{{ runenv }}-ofrf.{{ item }}"
+  with_items: 
+    - crt
+    - key
+  register: ssl_autosigned_files
+
+
+- name: Remove exsiting files if crt or key dont exist
+  ansible.builtin.file:
+    path: "./ssl/{{ runenv }}-ofrf.{{ item }}"
+    state: absent
+  with_items: 
+    - conf
+    - csr
+    - crt
+    - key
+  when: not ssl_autosigned_files.results.0.stat.exists or not ssl_autosigned_files.results.1.stat.exists
+
+
+- name: Create file file for generating autosigned ssl
+  copy:
+    dest: "./ssl/{{ runenv }}-ofrf.conf"
+    content: |
+      # Fully qualified server (or service) name
+      FQDN = {{ ofrf_hostname }}
+
+      [ req ]
+      default_bits = 2048
+      prompt = no
+      encrypt_key = no
+      distinguished_name = dn
+      req_extensions = req_ext
+
+      [ dn ]
+      C = CH
+      L = Lausanne
+      O = Ecole polytechnique federale de Lausanne (EPFL)
+      CN = $FQDN
+
+      [req_ext]
+      subjectAltName = @alt_names
+
+      [alt_names]
+      DNS.0 = $FQDN
+      DNS.1 = i.{{ tkgi_clustername }}.xaas.epfl.ch
+  when: not ssl_autosigned_files.results.0.stat.exists or not ssl_autosigned_files.results.1.stat.exists
+
+
+- name: Generate key
+  command: openssl genrsa -out ./ssl/{{ runenv }}-ofrf.key 2048
+  when: not ssl_autosigned_files.results.0.stat.exists or not ssl_autosigned_files.results.1.stat.exists
+
+
+- name: Generate csr
+  command: openssl req -new -config ./ssl/{{ runenv }}-ofrf.conf -key ./ssl/{{ runenv }}-ofrf.key -out ./ssl/{{ runenv }}-ofrf.csr
+  when: not ssl_autosigned_files.results.0.stat.exists or not ssl_autosigned_files.results.1.stat.exists
+
+
+- name: Generate crt
+  command: openssl x509 -req -days 3650 -in ./ssl/{{ runenv }}-ofrf.csr -signkey ./ssl/{{ runenv }}-ofrf.key -out ./ssl/{{ runenv }}-ofrf.crt
+  when: not ssl_autosigned_files.results.0.stat.exists or not ssl_autosigned_files.results.1.stat.exists
+
+
+- name: Create environment variables for autosigned ssl
+  ansible.builtin.set_fact:
+    ingress_tls_crt: "{{ lookup('file', './ssl/{{ runenv }}-ofrf.crt') }}"
+    ingress_tls_key: "{{ lookup('file', './ssl/{{ runenv }}-ofrf.key') }}"
