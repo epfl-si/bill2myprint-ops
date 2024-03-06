@@ -27,7 +27,7 @@
   when: not ssl_autosigned_files.results.0.stat.exists or not ssl_autosigned_files.results.1.stat.exists
 
 
-- name: Create file file for generating autosigned ssl
+- name: Create config file for generating crs
   copy:
     dest: "./ssl/{{ runenv }}-ofrf.conf"
     content: |

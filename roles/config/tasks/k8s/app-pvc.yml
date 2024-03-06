@@ -14,4 +14,4 @@
         resources:
           requests:
             storage: 1Gi
-        volumeName: pv-nfs-svc0056mprntkd0001-1
+        volumeName: pv-nfs-{{ tkgi_clustername }}-1  
