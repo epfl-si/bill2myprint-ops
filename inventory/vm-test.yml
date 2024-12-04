@@ -7,7 +7,7 @@ all:
       web_server_msg: "Hello, this is the test server itsmprnt0017"
 
       ### Secrets env vars ######################################
-      _ofrf_secrets: "{{ lookup('file', '/keybase/team/epfl_idevfsd/ofrf/secrets-test.yml') | from_yaml }}"
+      _ofrf_secrets: "{{ lookup('file', '/keybase/team/epfl_ofrf/secrets-test.yml') | from_yaml }}"
 
   vars:
     RUNINFRA: vm

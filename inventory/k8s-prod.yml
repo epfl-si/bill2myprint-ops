@@ -1,0 +1,22 @@
+all:
+  hosts:
+    ofrf-prod@OS4:
+      ansible_python_interpreter: python3
+      ansible_host: localhost
+      ansible_connection: local
+      openshift_clustername: svc0056-ofrf-nfs-prod-app
+      openshift_namespace: svc0056p-bill2myprint
+      ofrf_hostname: ofrf.epfl.ch
+      ofrf_site_domain: "https://{{ ofrf_hostname }}"
+      ofrf_site_id: 1
+      nginx_image: nginx-unprivileged:1.26.2-alpine
+      ghcr_image_name: bill2myprint:20241204085513.9a32258.46
+      avi_route_access_level: private
+
+      ### Secrets env vars ######################################
+      _ofrf_secrets: "{{ lookup('file', '/keybase/team/epfl_ofrf/secrets-prod.yml') | from_yaml }}"
+      _private_secrets: "{{ lookup('file', '/keybase/private/duratti/password-personnal.yml') | from_yaml }}"
+
+  vars:
+    RUNINFRA: k8s
+    RUNENV: prod

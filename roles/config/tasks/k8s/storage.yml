@@ -6,12 +6,13 @@
       kind: PersistentVolumeClaim
       metadata:
         name: ofrf-pvc
-        namespace: ofrf
+        namespace: "{{ openshift_namespace }}"
       spec:
         accessModes:
           - ReadWriteMany
+        storageClassName: ""  
         volumeMode: Filesystem
         resources:
           requests:
-            storage: 1Gi
-        volumeName: pv-nfs-{{ tkgi_clustername }}-1  
+            storage: 10Gi
+        volumeName: "{{ openshift_clustername }}"

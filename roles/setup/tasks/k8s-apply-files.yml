@@ -1,29 +1,47 @@
 ---
 
-- name: Log in git repository
+- name: Log in ghcr.io (git repository)
   docker_login:
-    registry: ghcr.io
+    registry: "{{ ghcr_registry }}"
     username: "{{ _private_secrets.ghcrio.username }}"
-    password: "{{ _private_secrets.ghcrio.password }}"
+    password: "{{ _private_secrets.ghcrio.token }}"
     reauthorize: yes
   changed_when: false
 
 
-- name: Push image from github to Harbor
+- name: Connect to Quay
   docker_login:
-    registry: vsissp-harbor-p.epfl.ch
+    registry: "{{ quay_host }}"
     username: "{{ _private_secrets.gaspar.user }}"
     password: "{{ _private_secrets.gaspar.password }}"
     reauthorize: yes
   changed_when: false
 
 
-- name: Clone bill2myprint repo
-  git:
-    repo: git@github.com:epfl-si/bill2myprint.git
-    dest: /tmp/ofrf
-    force: yes
-#    version: fea-kubernetes
-    accept_hostkey: yes
-  tags:
-    - git_clone
+- name: Manage app image
+  block:
+    - name: Pull last app image from ghcr.io
+      community.docker.docker_image:
+        name: "{{ ghcr_registry }}/{{ ghcr_organisation }}/{{ ghcr_image_name }}"
+        source: pull
+    - name: Tag and push last app image to Quay
+      community.docker.docker_image:
+        name: "{{ ghcr_registry }}/{{ ghcr_organisation }}/{{ ghcr_image_name }}"
+        repository: "{{ quay_host }}/{{ quay_repo_name }}/{{ app_name }}"
+        push: true
+        force_tag: yes
+        source: local
+
+
+- name: Manage nginx image
+  block:
+    - name: Pull nginx image from docker.io
+      community.docker.docker_image:
+        name: "{{ nginx_docker_repo }}/{{ nginx_image }}"
+        source: pull
+    - name: Tag and push nginx image to Quay
+      community.docker.docker_image:
+        name: "{{ nginx_docker_repo }}/{{ nginx_image }}"
+        repository: "{{ quay_host }}/{{ quay_repo_name }}/{{ nginx_image }}"
+        push: yes
+        source: local

@@ -52,7 +52,7 @@
 
       [alt_names]
       DNS.0 = $FQDN
-      DNS.1 = i.{{ tkgi_clustername }}.xaas.epfl.ch
+      DNS.1 = i.{{ openshift_clustername }}.xaas.epfl.ch
   when: not ssl_autosigned_files.results.0.stat.exists or not ssl_autosigned_files.results.1.stat.exists
 
 

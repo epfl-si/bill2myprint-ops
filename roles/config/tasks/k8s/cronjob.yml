@@ -1,0 +1,71 @@
+- name: CronJobs
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: batch/v1
+      kind: CronJob
+      metadata:
+        name: ofrf-cronjob
+        namespace: "{{ openshift_namespace }}"
+      spec:
+        timeZone: "Europe/Zurich"
+        schedule: "00 23 * * *"
+        concurrencyPolicy: Forbid
+        jobTemplate:
+          spec:
+            template:
+              spec:
+                serviceAccountName: ofrf-service-account
+                containers:
+                  - name: ofrf-cronjob
+                    image: "{{ quay_host }}/{{ quay_repo_name }}/{{ app_name }}"
+                    env:
+                      - name: SECRET_KEY
+                        value: "{{ _ofrf_secrets.SECRET_KEY }}"
+                      - name: DJANGO_SETTINGS_MODULE
+                        value: "config.settings.k8s-{{ RUNENV }}"
+                      - name: OFRF_SITE_DOMAIN
+                        value: "{{ ofrf_site_domain }}"
+                      - name: OFRF_SITE_ID
+                        value: "{{ ofrf_site_id | string }}"  
+                      - name: DEBUG_MODE
+                        value: "false"
+                      - name: OFRF_DATABASE_HOST
+                        value: "{{ _ofrf_secrets.OFRF_DB_HOST }}"
+                      - name: OFRF_DATABASE_PORT
+                        value: "{{ _ofrf_secrets.OFRF_DB_PORT }}"
+                      - name: OFRF_DATABASE_NAME
+                        value: "{{ _ofrf_secrets.OFRF_DB_NAME }}"
+                      - name: OFRF_DATABASE_USER
+                        value: "{{ _ofrf_secrets.OFRF_DB_USER }}"
+                      - name: OFRF_DATABASE_PASSWORD
+                        value: "{{ _ofrf_secrets.OFRF_DB_PASSWORD }}"
+                      - name: MYPRINT_DATABASE_HOST
+                        value: "{{ _ofrf_secrets.MYPRINT_DB_HOST }}"
+                      - name: MYPRINT_DATABASE_PORT
+                        value: "{{ _ofrf_secrets.MYPRINT_DB_PORT }}"
+                      - name: MYPRINT_DATABASE_NAME
+                        value: "{{ _ofrf_secrets.MYPRINT_DB_NAME }}"
+                      - name: MYPRINT_DATABASE_USER
+                        value: "{{ _ofrf_secrets.MYPRINT_DB_USER }}"
+                      - name: MYPRINT_DATABASE_PASSWORD
+                        value: "{{ _ofrf_secrets.MYPRINT_DB_PASSWORD }}"
+                      - name: CADI_DATABASE_HOST
+                        value: "{{ _ofrf_secrets.CADI_DB_HOST }}"
+                      - name: CADI_DATABASE_PORT
+                        value: "{{ _ofrf_secrets.CADI_DB_PORT }}"
+                      - name: CADI_DATABASE_NAME
+                        value: "{{ _ofrf_secrets.CADI_DB_NAME }}"
+                      - name: CADI_DATABASE_USER
+                        value: "{{ _ofrf_secrets.CADI_DB_USER }}"
+                      - name: CADI_DATABASE_PASSWORD
+                        value: "{{ _ofrf_secrets.CADI_DB_PASSWORD }}"
+                    resources:
+                      requests:
+                        cpu: "100m"
+                        memory: "256Mi"
+                      limits:
+                        cpu: "250m"
+                        memory: "1Gi"
+                    command: ["python3"]
+                    args: ["/app/src/manage.py", "import_from_uniflow"]
+                restartPolicy: OnFailure

@@ -1,17 +1,17 @@
 ---
 
+- name: Apply storage
+  import_tasks:
+    file: ./k8s/storage.yml
+  tags:
+    - apply-app-pvc
+
+
 - name: Apply app deployment
   import_tasks:
     file: ./k8s/app-deployment.yml
   tags:
     - apply-app-deployment
-
-
-- name: Apply app pvc
-  import_tasks:
-    file: ./k8s/app-pvc.yml
-  tags:
-    - apply-app-pvc
 
 
 - name: Apply app service
@@ -28,34 +28,38 @@
     - apply-app-service-account
 
 
-#- name: Apply db deployment
-#  import_tasks:
-#    file: ./k8s/db-deployment.yml
-#  tags:
-#    - apply-db-deployment
+- name: Apply db deployment
+  import_tasks:
+    file: ./k8s/db-deployment.yml
+  tags:
+    - apply-db-deployment
+  when: runenv == 'dev' 
 
 
-#- name: Restore database from dump
-#  kubernetes.core.k8s_exec:
-#    namespace: ofrf
-#    pod: ofrf-mariadb
-#    command: mysql -h mariadb ofrf -u ofrf -pofrf < ../../../data/dbproddump.sql
-#  tags:
-#    - apply-db-restore
+- name: Restore database from dump
+  kubernetes.core.k8s_exec:
+    namespace: "{{ openshift_namespace }}"
+    pod: ofrf-mariadb
+    command: mysql -h mariadb ofrf -u ofrf -pofrf < ../../../data/dbproddump.sql
+  tags:
+    - apply-db-restore
+  when: runenv == 'dev'
 
 
-#- name: Apply db service
-#  import_tasks:
-#    file: ./k8s/db-service.yml
-#  tags:
-#    - apply-db-service
+- name: Apply db service
+  import_tasks:
+    file: ./k8s/db-service.yml
+  tags:
+    - apply-db-service
+  when: runenv == 'dev' 
 
 
-#- name: Apply db service account
-#  import_tasks:
-#    file: ./k8s/db-serviceaccount.yml
-#  tags:
-#    - apply-db-service-account
+- name: Apply db service account
+  import_tasks:
+    file: ./k8s/db-serviceaccount.yml
+  tags:
+    - apply-db-service-account
+  when: runenv == 'dev'   
 
 
 - name: Apply nginx configmap
@@ -88,27 +92,21 @@
 
 - name: Apply nginx ingress
   import_tasks:
-    file: ./k8s/nginx-ingress.yml
+    file: ./k8s/nginx-routes.yml
   tags:
     - apply-nginx-ingress
 
 
-- name: Apply rbac harbor pull
+- name: Apply quay robot account
   import_tasks:
-    file: ./k8s/rbac-harborpullsealedsecret.yml
+    file: ./k8s/rbac-quay-robot-account.yml
   tags:
-    - apply-rbac-harbor-pull
+    - apply-rbac-quay-robot-account
 
 
-#- name: Create rbac/restricted-role
-#  kubernetes.core.k8s:
-#    state: present
-#    src: /tmp/ofrf/k8s/dev/rbac/restricted-role.yml
-
-
-
-#- name: Create rbac/restricted-role-bindings-to-sa
-#  kubernetes.core.k8s:
-#    state: present
-#    src: /tmp/ofrf/k8s/dev/rbac/restricted-role-bindings-to-sa.yml
-
+- name: Apply quay robot account
+  import_tasks:
+    file: ./k8s/cronjob.yml
+  when: runenv == 'prod'
+  tags:
+    - cronjob

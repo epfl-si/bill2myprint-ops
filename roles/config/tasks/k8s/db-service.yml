@@ -6,7 +6,7 @@
       kind: Service
       metadata:
         name: mariadb-service
-        namespace: ofrf
+        namespace: "{{ openshift_namespace }}"
         labels:
           app: mariadb
       spec:

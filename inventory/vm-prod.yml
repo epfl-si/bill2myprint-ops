@@ -7,7 +7,7 @@ all:
       web_server_msg: "Hello, this is the prod server itsmprnt0019"
 
       ### Secrets env vars ######################################
-      _ofrf_secrets: "{{ lookup('file', '/keybase/team/epfl_idevfsd/ofrf/secrets-prod.yml') | from_yaml }}"
+      _ofrf_secrets: "{{ lookup('file', '/keybase/team/epfl_ofrf/secrets-prod.yml') | from_yaml }}"
 
   vars:
     RUNINFRA: vm

@@ -6,7 +6,7 @@
       kind: Deployment
       metadata:
         name: ofrf-mariadb
-        namespace: ofrf
+        namespace: "{{ openshift_namespace }}"
         labels:
           app: ofrf-mariadb
       spec:

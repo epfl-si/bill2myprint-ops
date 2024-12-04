@@ -18,10 +18,10 @@
 
 cd "$(dirname "$0")"; cd "$(/bin/pwd)"
 
-ensure_suitcase () {
+platform_check () {
     if ! test -f ansible-deps-cache/.versions 2>/dev/null; then
       curl https://raw.githubusercontent.com/epfl-si/ansible.suitcase/master/install.sh | \
-            SUITCASE_ANSIBLE_VERSION=10.3.0 \
+            SUITCASE_ANSIBLE_VERSION=6.3.0 \
             SUITCASE_DIR=$PWD/ansible-deps-cache \
             SUITCASE_PIP_EXTRA="bcrypt passlib kubernetes docker" \
             SUITCASE_ANSIBLE_REQUIREMENTS=requirements.yml \
@@ -35,33 +35,25 @@ ensure_suitcase () {
     export ANSIBLE_ROLES_PATH="$PWD/ansible-deps-cache/roles"
     export ANSIBLE_COLLECTIONS_PATHS="$PWD/ansible-deps-cache"
     . "$PWD"/ansible-deps-cache/lib.sh
+#    oc_check
 }
 
-do_login_oc () {
-    local cluster_url=$1
-
-    if ! oc whoami --show-server | grep -q "$cluster_url"; then
-        echo "Logging into OpenShift cluster at $cluster_url..."
-        if ! oc login "$cluster_url"; then
-            echo "Login failed. Exiting."
-            exit 1
-        fi
-    else
-        echo "Already logged into $cluster_url."
-    fi
-}
+# oc_check () {
+#   if ! oc projects >/dev/null 2>&1; then
+#     echo "Please login to openshift:"
+#     oc login
+#   fi
+# }
 
 
 ###########################################################################
 
-ensure_suitcase
-
-
+platform_check
+ensure_tkgi svc0056mprntkd0001 tkgi.epfl.ch ./tkgi-EPFL-CA.crt
 playbook_flags="$playbook_flags -e @vars/global_vars.yml -e git_current_branch=$git_current_branch"
 
-inventory_mode="dev"
+inventory_mode="test"
 infra="vm"
-cluster_url="https://api.ocpitst0001.xaas.epfl.ch:6443"
 
 mode=ansible-playbook
 
@@ -70,23 +62,14 @@ ansible_args=(-e "startsible_dir=$OLDPWD")
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
-        --vm)
-            infra="vm"
-            shift ;;   
         --k8s)
             infra="k8s"
-            shift ;;    
+            shift ;;
         --dev)
             inventory_mode="dev"
-            cluster_url=""
-            shift ;;
-        --test)
-            inventory_mode="test"
-            cluster_url="https://api.ocpitst0001.xaas.epfl.ch:6443"
             shift ;;
         --prod)
             inventory_mode="prod"
-            cluster_url="https://api.ocpitsp0001.xaas.epfl.ch:6443"
             shift ;;
         -m) mode=ansible
             ansible_args+=("-m")
@@ -96,16 +79,6 @@ while [ "$#" -gt 0 ]; do
             shift ;;
     esac
 done
-
-
-if [[ $infra == "k8s" ]]; then
-    if [[ $cluster_url == "" ]]; then
-        echo "No cluster $inventory_mode for $infra."
-        exit 1
-    else
-        do_login_oc "$cluster_url"
-    fi
-fi
 
 
 inventories () {

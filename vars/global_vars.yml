@@ -1,7 +1,16 @@
 ---
 runinfra: "{{ RUNINFRA }}"
 runenv: "{{ RUNENV | default('test') }}"
-keybase: /keybase/team/ofrf
 
 ofrf_home: /srv/ofrf/
 ofrf_data: /app/ofrf/src/data
+
+app_name: bill2myprint:latest
+
+ghcr_registry: ghcr.io
+ghcr_organisation: epfl-si
+
+quay_host: "quay-its.epfl.ch"
+quay_repo_name: "svc0056"
+
+nginx_docker_repo: "docker.io/nginxinc" 

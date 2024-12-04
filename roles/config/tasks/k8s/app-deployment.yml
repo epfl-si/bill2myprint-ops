@@ -6,9 +6,9 @@
       kind: Deployment
       metadata:
         name: ofrf-app
-        namespace: ofrf
+        namespace: "{{ openshift_namespace }}"
         labels:
-          app: ofrf-app
+          app: ofrf
       spec:
         replicas: 1
         strategy:
@@ -33,8 +33,7 @@
                     topologyKey: kubernetes.io/hostname
             containers:
               - name: app
-                image: vsissp-harbor-p.epfl.ch/itsmprntd/app:latest
-                #          imagePullPolicy: "IfNotPresent"
+                image: "{{ quay_host }}/{{ quay_repo_name }}/{{ app_name }}"
                 imagePullPolicy: "Always"
                 ports:
                   - containerPort: 8000
@@ -43,7 +42,11 @@
                   - name: SECRET_KEY
                     value: "{{ _ofrf_secrets.SECRET_KEY }}"
                   - name: DJANGO_SETTINGS_MODULE
-                    value: config.settings.k8s
+                    value: "config.settings.k8s-{{ RUNENV }}"
+                  - name: OFRF_SITE_DOMAIN
+                    value: "{{ ofrf_site_domain }}"
+                  - name: OFRF_SITE_ID
+                    value: "{{ ofrf_site_id | string }}"  
                   - name: DEBUG_MODE
                     value: "false"
                   - name: OFRF_DATABASE_HOST
@@ -76,26 +79,34 @@
                     value: "{{ _ofrf_secrets.CADI_DB_USER }}"
                   - name: CADI_DATABASE_PASSWORD
                     value: "{{ _ofrf_secrets.CADI_DB_PASSWORD }}"
+                resources:
+                  requests:
+                    cpu: "100m"
+                    memory: "256Mi"
+                  limits:
+                    cpu: "250m"
+                    memory: "1Gi"
                 readinessProbe:
                   tcpSocket:
                     port: 8000
-                  initialDelaySeconds: 5
-                  periodSeconds: 10
+                  initialDelaySeconds: 15
+                  timeoutSeconds: 10
+                  periodSeconds: 20
+                  successThreshold: 1
+                  failureThreshold: 2
                 livenessProbe:
                   tcpSocket:
                     port: 8000
                   initialDelaySeconds: 15
+                  timeoutSeconds: 10
                   periodSeconds: 20
+                  successThreshold: 1
+                  failureThreshold: 2
                 volumeMounts:
                   - name: ofrf-static-files-volume
                     mountPath: /static
                     subPath: static
                     readOnly: false
-            securityContext:
-              fsGroup: 1000
-              runAsGroup: 1000
-              runAsNonRoot: true
-              runAsUser: 1000
             volumes:
               - name: ofrf-static-files-volume
                 persistentVolumeClaim:

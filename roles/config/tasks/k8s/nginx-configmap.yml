@@ -6,7 +6,7 @@
       kind: ConfigMap
       metadata:
         name: nginx-config-configmap
-        namespace: ofrf
+        namespace: "{{ openshift_namespace }}"
         labels:
           app: ofrf
       data:
@@ -43,7 +43,7 @@
               proxy_pass_request_headers on;
               proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
               proxy_set_header Host $http_host;
-              proxy_set_header X-Forwarded-Proto https;
+              proxy_set_header X-Forwarded-Proto $scheme;
               proxy_redirect off;
             }
 

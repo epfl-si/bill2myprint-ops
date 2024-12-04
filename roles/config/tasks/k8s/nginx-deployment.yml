@@ -6,7 +6,7 @@
       kind: Deployment
       metadata:
         name: ofrf-nginx
-        namespace: ofrf
+        namespace: "{{ openshift_namespace }}"
         labels:
           app: ofrf-nginx
       spec:
@@ -33,11 +33,18 @@
                     topologyKey: kubernetes.io/hostname
             containers:
               - name: nginx
-                image: vsissp-harbor-p.epfl.ch/itsmprntd/nginx-unprivileged:1.23.1-alpine
+                image: "{{ quay_host }}/{{ quay_repo_name }}/{{ nginx_image }}"
                 imagePullPolicy: "IfNotPresent"
                 ports:
                   - containerPort: 8080
                     name: http-port
+                resources:
+                  requests:
+                    cpu: "100m"
+                    memory: "256Mi"
+                  limits:
+                    cpu: "250m"
+                    memory: "512Mi"    
                 livenessProbe:
                   tcpSocket:
                     port: 8080

@@ -6,7 +6,7 @@
       kind: Service
       metadata:
         name: app-service
-        namespace: ofrf
+        namespace: "{{ openshift_namespace }}"
         labels:
           app: ofrf
       spec:

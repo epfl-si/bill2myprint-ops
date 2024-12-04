@@ -1,0 +1,21 @@
+- name: Nginx - Route
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: route.openshift.io/v1
+      kind: Route
+      metadata:
+        name: nginx-route
+        namespace: "{{ openshift_namespace }}"
+        labels:
+          route: "{{ avi_route_access_level }}"
+      spec:
+        host: "{{ ofrf_hostname }}"
+        to:
+          kind: Service
+          name: nginx-service
+          weight: 100
+        port:
+          targetPort: http-port
+        tls:
+          termination: edge
+          insecureEdgeTerminationPolicy: Redirect

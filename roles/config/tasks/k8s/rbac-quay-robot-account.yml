@@ -1,0 +1,12 @@
+- name: Create rbac/quay-pull-sealed-secret
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: "{{ _ofrf_secrets.quay.pull_robot.name }}"
+        namespace: "{{ openshift_namespace }}"
+      data:
+        .dockerconfigjson: "{{ _ofrf_secrets.quay.pull_robot.dockerconfigjson }}"
+      type: kubernetes.io/dockerconfigjson
