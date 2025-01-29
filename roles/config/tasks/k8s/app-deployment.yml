@@ -49,6 +49,8 @@
                     value: "{{ ofrf_site_id | string }}"  
                   - name: DEBUG_MODE
                     value: "false"
+                  - name: TEQUILA_ALLOWED_REQUEST_HOSTS
+                    value: "{{ tequila_allowed_request_hosts }}"
                   - name: OFRF_DATABASE_HOST
                     value: "{{ _ofrf_secrets.OFRF_DB_HOST }}"
                   - name: OFRF_DATABASE_PORT
