@@ -9,6 +9,7 @@ all:
       ofrf_hostname: ofrf.epfl.ch
       ofrf_site_domain: "https://{{ ofrf_hostname }}"
       ofrf_site_id: 1
+      tequila_allowed_request_hosts: 10.98.72.146|10.98.72.147|10.98.72.148
       nginx_image: nginx-unprivileged:1.26.2-alpine
       ghcr_image_name: bill2myprint:20241204085513.9a32258.46
       avi_route_access_level: private
