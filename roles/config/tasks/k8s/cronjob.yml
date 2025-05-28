@@ -61,11 +61,10 @@
                         value: "{{ _ofrf_secrets.CADI_DB_PASSWORD }}"
                     resources:
                       requests:
-                        cpu: "100m"
-                        memory: "256Mi"
+                        cpu: "251m"
+                        memory: "100Mi"
                       limits:
-                        cpu: "250m"
-                        memory: "1Gi"
+                        memory: "100Mi"
                     command: ["python3"]
                     args: ["/app/src/manage.py", "import_from_uniflow"]
                 restartPolicy: OnFailure

@@ -83,11 +83,10 @@
                     value: "{{ _ofrf_secrets.CADI_DB_PASSWORD }}"
                 resources:
                   requests:
-                    cpu: "100m"
-                    memory: "256Mi"
+                    cpu: "10m"
+                    memory: "196Mi"
                   limits:
-                    cpu: "250m"
-                    memory: "1Gi"
+                    memory: "196Mi"
                 readinessProbe:
                   tcpSocket:
                     port: 8000
