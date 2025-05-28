@@ -42,7 +42,7 @@ do_login_oc () {
 
     if ! oc whoami --show-server | grep -q "$cluster_url"; then
         echo "Logging into OpenShift cluster at $cluster_url..."
-        if ! oc login "$cluster_url"; then
+        if ! oc login "$cluster_url" --web; then
             echo "Login failed. Exiting."
             exit 1
         fi
