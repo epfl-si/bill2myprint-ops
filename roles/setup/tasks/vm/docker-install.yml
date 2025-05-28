@@ -43,7 +43,7 @@
   service:
     name: docker
     state: started
-  become: true
+  become: yes
 
 
 - name: Create the docker network
