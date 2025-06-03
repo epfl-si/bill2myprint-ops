@@ -5,7 +5,7 @@ runenv: "{{ RUNENV | default('test') }}"
 ofrf_home: /srv/ofrf/
 ofrf_data: /app/ofrf/src/data
 
-app_name: bill2myprint:latest
+app_name: "bill2myprint:{{ RUNENV }}-latest"
 
 ghcr_registry: ghcr.io
 ghcr_organisation: epfl-si

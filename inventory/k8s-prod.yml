@@ -11,7 +11,7 @@ all:
       ofrf_site_id: 1
       tequila_allowed_request_hosts: 10.98.72.146|10.98.72.147|10.98.72.148
       nginx_image: nginx-unprivileged:1.26.2-alpine
-      ghcr_image_name: bill2myprint:20241204085513.9a32258.46
+      ghcr_image_name: bill2myprint:20250528122946.f734f26.49
       avi_route_access_level: private
 
       ### Secrets env vars ######################################
