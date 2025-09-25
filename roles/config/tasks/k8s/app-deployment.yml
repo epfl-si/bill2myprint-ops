@@ -112,6 +112,10 @@
                     mountPath: /static
                     subPath: static
                     readOnly: false
+                  - name: ofrf-static-files-volume
+                    mountPath: /upload
+                    subPath: media
+                    readOnly: false
             volumes:
               - name: ofrf-static-files-volume
                 persistentVolumeClaim:

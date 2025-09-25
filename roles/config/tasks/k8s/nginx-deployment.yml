@@ -65,6 +65,10 @@
                     mountPath: /static
                     subPath: static
                     readOnly: true
+                  - name: ofrf-static-files-volume
+                    mountPath: /upload
+                    subPath: media
+                    readOnly: true
                   - name: nginx-config-volume
                     mountPath: /etc/nginx/conf.d
                     readOnly: false
