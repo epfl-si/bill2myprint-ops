@@ -34,6 +34,11 @@
               alias /static;
             }
 
+            location /media {
+              autoindex off;
+              alias /upload;
+            }
+
             location / {
               try_files $uri $uri/ @python_django;
             }
