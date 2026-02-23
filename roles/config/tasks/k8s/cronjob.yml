@@ -62,9 +62,9 @@
                     resources:
                       requests:
                         cpu: "251m"
-                        memory: "100Mi"
+                        memory: "1000Mi"
                       limits:
-                        memory: "100Mi"
+                        memory: "1000Mi"
                     command: ["python3"]
                     args: ["/app/src/manage.py", "import_from_uniflow"]
                 restartPolicy: OnFailure
